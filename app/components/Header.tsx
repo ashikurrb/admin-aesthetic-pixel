@@ -1,10 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { ArrowLeftRight, Clipboard, Menu } from "lucide-react";
-import { ModeToggle } from "./dark-toggle";
+import { ArrowLeftRight, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -16,35 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function MainNav() {
-  const pathName = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-  const isHome = pathName === "/";
-
-  const isActive = (path: string) => {
-    if (path === "/") {
-      return pathName === "/";
-    }
-    return pathName.startsWith(path);
-  };
-
-  useEffect(() => {
-    if (!isHome) return;
-
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHome]);
 
   return (
-    <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isHome
-          ? scrolled
-            ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm"
-            : "bg-transparent"
-          : "bg-white dark:bg-black shadow-sm"
-      }`}
-    >
+    <header>
       {" "}
       <div className="container mx-auto flex h-25 items-center justify-between px-4">
         <Link href="/" className="shrink-0">
@@ -87,12 +58,6 @@ export default function MainNav() {
           </Link>
         </span>
 
-        {/* Desktop Theme Toggle */}
-
-        {/* <span className="hidden md:inline-flex text-foreground">
-            <ModeToggle className="text-foreground" />
-          </span> */}
-
         {/* Mobile Menu */}
         <div className=" flex items-center gap-4">
           <Sheet>
@@ -123,8 +88,6 @@ export default function MainNav() {
               </nav>
             </SheetContent>
           </Sheet>
-          {/* Dark Mode Toggle beside menu icon */}
-          {/* <ModeToggle className="text-foreground" /> */}
         </div>
       </div>
     </header>
