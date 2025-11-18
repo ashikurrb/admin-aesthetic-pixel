@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function MainNav() {
-
   return (
     <header>
       {" "}
@@ -36,7 +35,7 @@ export default function MainNav() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="md:flex flex-1 justify-center items-center space-x-6 relative">
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-6 relative">
           <span className="space-y-2 my-5">
             <h1 className="font-bold text-2xl">Welcome Back</h1>
             <p className="text-md">
@@ -59,7 +58,8 @@ export default function MainNav() {
         </span>
 
         {/* Mobile Menu */}
-        <div className=" flex items-center gap-4">
+          <h1 className="sm:hidden block font-bold text-2xl text-center">Aesthetic Pixel Studio</h1>
+        <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
               <button className="p-2 rounded hover:bg-muted text-foreground">
@@ -68,7 +68,7 @@ export default function MainNav() {
             </SheetTrigger>
             <SheetContent side="left" className="bg-background">
               <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
+                <SheetTitle>Admin Dashboard</SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col space-y-2">
                 {/* Quote */}
