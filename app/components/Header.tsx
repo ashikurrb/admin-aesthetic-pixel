@@ -1,20 +1,11 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeftRight, Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function MainNav() {
+export default function Header() {
   return (
-    <header>
+    <header className="bg-[#f5f5f5] w-full py-2">
       {" "}
       <div className="container mx-auto flex h-25 items-center justify-between px-4">
         <Link href="/" className="shrink-0">
@@ -34,7 +25,6 @@ export default function MainNav() {
           />
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center items-center space-x-6 relative">
           <span className="space-y-2 my-5">
             <h1 className="font-bold text-2xl">Welcome Back</h1>
@@ -45,49 +35,15 @@ export default function MainNav() {
           </span>
         </nav>
 
-        {/* Desktop Book a Slot Button */}
-        <span className="hidden md:inline-flex text-foreground me-3">
-          <Link href="/studio-rent" target="_blank" rel="noopener noreferrer">
-            <Button
-              variant="secondary"
-              className="cursor-pointer text-black dark:text-white font-bold text-lg"
-            >
-              Rent Studio
-            </Button>
-          </Link>
-        </span>
-
-        {/* Mobile Menu */}
-          <h1 className="sm:hidden block font-bold text-2xl text-center">Aesthetic Pixel Studio</h1>
-        <div className="flex items-center gap-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <button className="p-2 rounded hover:bg-muted text-foreground">
-                <Menu size={24} />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="bg-background">
-              <SheetHeader>
-                <SheetTitle>Admin Dashboard</SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col space-y-2">
-                {/* Quote */}
-                <SheetClose asChild>
-                  <Link
-                    href="/studio-rent"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full mt-5 px-8 block"
-                  >
-                    <Button variant="secondary" className="w-full font-bold">
-                      <ArrowLeftRight className="w-5 h-5" />
-                      Rent Studio
-                    </Button>
-                  </Link>
-                </SheetClose>
-              </nav>
-            </SheetContent>
-          </Sheet>
+        <div className="flex items-center gap-3 me-3">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col items-start">
+            <span className="font-bold text-sm">Jake Moor</span>
+            <span className="text-xs text-muted-foreground">Super Admin</span>
+          </div>
         </div>
       </div>
     </header>
