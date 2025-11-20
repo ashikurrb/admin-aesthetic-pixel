@@ -34,15 +34,15 @@ export default function RootLayout({
         {/* FIXED HEADER */}
         <Header />
 
-  <div className="flex pt-[90px] min-h-[calc(100vh-90px)]">
-  <SidebarProvider>
-    <AppSidebar />
-    <div className="flex-1 overflow-y-auto p-4">
-      <SidebarTrigger className="mt-6" />
-      <main className="mt-6">{children}</main>
-    </div>
-  </SidebarProvider>
-</div>
+        <div className="flex pt-[90px] min-h-[calc(100vh-90px)]">
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="flex-1 overflow-y-auto p-4">
+              <SidebarTrigger className="mt-6 md:hidden block" />
+              <main className="mt-6">{children}</main>
+            </div>
+          </SidebarProvider>
+        </div>
       </body>
     </html>
   );

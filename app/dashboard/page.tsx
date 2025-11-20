@@ -65,7 +65,7 @@ export default function AppDashboard() {
   return (
     <div className="mx-20">
       {/* Dashboard Cards Section */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-10">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:py-10">
         {dashboardCards.map((card, index) => (
           <Card key={index} className="p-0 rounded-lg">
             <CardContent className="flex flex-col gap-2 p-4">
@@ -90,8 +90,8 @@ export default function AppDashboard() {
         ))}
       </section>
       <section>
-        <div className="mt-20">
-          <span className="ms-10">
+        <div className="mt-10">
+          <span className="ms-10 text-center md:text-start">
             <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
             <p className="text-gray-600 mb-6">
               Start creating and managing your content
