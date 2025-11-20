@@ -1,18 +1,13 @@
 "use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Header from "./components/Header";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -20,9 +15,9 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -30,20 +25,24 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
       </head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster theme="dark" position="top-center" offset={35} />
-        <Header />
-        <SidebarProvider className="fixed">
-          <div className="flex">
-            <AppSidebar />
-            <SidebarTrigger />
-            <main className="flex-1">{children}</main>
-          </div>
-        </SidebarProvider>
 
-        {/* <Footer /> */}
+        {/* FIXED HEADER */}
+        <Header />
+
+  <div className="flex pt-[90px] min-h-[calc(100vh-90px)]">
+  <SidebarProvider>
+    <AppSidebar />
+    <div className="flex-1 overflow-y-auto p-4">
+      <SidebarTrigger className="mt-6" />
+      <main className="mt-6">{children}</main>
+    </div>
+  </SidebarProvider>
+</div>
       </body>
     </html>
   );

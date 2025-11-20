@@ -5,9 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
   return (
-    <header className="bg-[#f5f5f5] w-full py-2">
+    <header className="bg-[#f5f5f5] w-full py-2 fixed z-50">
       {" "}
-      <div className="container mx-auto flex h-25 items-center justify-between px-4">
+      <div className="container mx-auto flex items-center justify-between px-4 h-auto">
         <Link href="/" className="shrink-0">
           <Image
             src="/logo.png"

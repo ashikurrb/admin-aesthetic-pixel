@@ -63,9 +63,9 @@ const quickActions = [
 
 export default function AppDashboard() {
   return (
-    <div>
+    <div className="mx-20">
       {/* Dashboard Cards Section */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 ms-30">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-10">
         {dashboardCards.map((card, index) => (
           <Card key={index} className="p-0 rounded-lg">
             <CardContent className="flex flex-col gap-2 p-4">
@@ -90,7 +90,7 @@ export default function AppDashboard() {
         ))}
       </section>
       <section>
-        <div className="mt-20 mx-30">
+        <div className="mt-20">
           <span className="ms-10">
             <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
             <p className="text-gray-600 mb-6">
@@ -101,14 +101,12 @@ export default function AppDashboard() {
             {quickActions.map((action, index) => (
               <Card
                 key={`action-${index}`}
-                className="p-0 border-none shadow-none rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+                className="p-0 border-2 shadow-none rounded-lg hover:shadow-md transition-shadow cursor-pointer"
               >
                 <CardContent className="flex flex-col gap-3 p-6">
                   {" "}
-                  {/* Increased padding here */}
                   <div className={`p-2 rounded-lg bg-red-500/10 self-start`}>
                     {" "}
-                    {/* self-start for left alignment */}
                     {action.icon}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mt-2">
