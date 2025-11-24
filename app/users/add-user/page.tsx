@@ -38,7 +38,7 @@ export default function AddUser() {
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-10 md:mb-4">
         <span className="text-xl font-bold">Add New User</span>
-        <div>
+          <div className="space-x-2">
           <Button variant="destructive" className="font-bold cursor-pointer">
             Save
           </Button>
@@ -48,7 +48,7 @@ export default function AddUser() {
         </div>
       </div>
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="bg-[#f4f5f7] py-4 px-8 rounded-lg w-full md:w-2/3">
+        <div className="bg-[#f4f5f7] dark:bg-gray-800 py-4 px-8 rounded-lg w-full md:w-2/3">
           <h1 className="font-bold text-lg mb-5">Basic Information</h1>
           <Label htmlFor="fullName">Full Name</Label>
           <Input type="text" className="my-4" placeholder="Full Name" />
@@ -81,7 +81,7 @@ export default function AddUser() {
           <Input type="password" className="my-4" placeholder="Password" />
         </div>
         <div className="w-full md:w-1/3 h-full">
-          <div className="bg-[#f4f5f7] py-4 px-8 rounded-lg">
+          <div className="bg-[#f4f5f7] dark:bg-gray-800 py-4 px-8 rounded-lg">
             <h1 className="font-bold text-lg mb-5">Profile & Permissions</h1>
             <div className="text-center mt-4">
               <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border">
@@ -145,7 +145,7 @@ export default function AddUser() {
               ))}
             </div>
           </div>
-          <div className="mt-5 ml-5">
+          <div className="mt-5 ml-5 space-x-2">
             <Button variant="destructive" className="font-bold cursor-pointer">
               Save
             </Button>
