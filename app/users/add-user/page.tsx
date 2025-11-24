@@ -35,7 +35,7 @@ export default function AddUser() {
   };
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto py-8 px-2 md:px-8">
       <div className="flex justify-between items-center mb-10 md:mb-4">
         <span className="text-xl font-bold">Add New User</span>
         <div className="space-x-2">
@@ -54,28 +54,39 @@ export default function AddUser() {
           <div className="space-y-4 md:space-y-7">
             <div>
               <Label htmlFor="fullName">Full Name</Label>
-              <Input type="text" className="my-2" placeholder="Full Name" />
+              <Input
+                type="text"
+                className="my-4 bg-white dark:bg-gray-700"
+                placeholder="Full Name"
+              />
             </div>
 
             <div>
               <Label htmlFor="email">Email Address</Label>
               <Input
                 type="email"
-                className="my-2"
+                className="my-4 bg-white dark:bg-gray-700"
                 placeholder="Email Address"
               />
             </div>
 
             <div>
               <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input type="tel" className="my-2" placeholder="Phone Number" />
+              <Input
+                type="tel"
+                className="my-4 bg-white dark:bg-gray-700"
+                placeholder="Phone Number"
+              />
             </div>
 
             <div>
               <Label htmlFor="role">Role</Label>
               <Select value={role} onValueChange={setRole}>
                 <div className="flex gap-2">
-                  <SelectTrigger id="role" className="my-2 w-full">
+                  <SelectTrigger
+                    id="role"
+                    className="my-4 w-full bg-white dark:bg-gray-700"
+                  >
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -97,15 +108,21 @@ export default function AddUser() {
 
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input type="password" className="my-2" placeholder="Password" />
+              <Input
+                type="password"
+                className="my-4 bg-white dark:bg-gray-700"
+                placeholder="Password"
+              />
             </div>
           </div>
         </div>
 
         <div className="w-full md:w-1/3 h-full">
           <div className="bg-[#f4f5f7] dark:bg-gray-800 py-4 px-8 rounded-lg">
-            <h1 className="font-bold text-lg mb-5">Profile & Permissions</h1>
-            <div className="text-center mt-4">
+            <h1 className="font-bold text-lg mb-8 text-center">
+              Profile & Permissions
+            </h1>
+            <div className="text-center my-4">
               <div className="w-32 h-32 mx-auto rounded-full overflow-hidden">
                 <Image
                   src={
@@ -124,7 +141,6 @@ export default function AddUser() {
             </div>
             <label className="cursor-pointer mx-auto flex flex-col items-center">
               <div className="flex flex-wrap items-center justify-center gap-3 mt-3">
-                {/* Upload Button */}
                 <Button variant="outline" asChild>
                   <span className="max-w-[140px] truncate">
                     {avatar ? avatar.name : "Upload Photo"}
@@ -177,7 +193,7 @@ export default function AddUser() {
               ))}
             </div>
           </div>
-          <div className="mt-5 ml-5 space-x-2">
+          <div className="mt-7 ml-5 space-x-2">
             <Button variant="destructive" className="font-bold cursor-pointer">
               Save
             </Button>
