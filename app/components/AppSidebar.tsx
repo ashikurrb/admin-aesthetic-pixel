@@ -61,10 +61,10 @@ export function AppSidebar() {
           <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
             <div className="flex items-center gap-2">
               <div className="w-4 h-px bg-muted-foreground/30"></div>
-              <Link href="/blog/new-post">
+              <Link href="/blog/create-new-post">
                 <div
                   className={`flex items-center gap-2 text-sm cursor-pointer ${
-                    pathname.startsWith("/blog/new-post")
+                    pathname.startsWith("/blog/create-new-post")
                       ? "text-red-600 font-bold"
                       : "text-muted-foreground"
                   }`}
@@ -108,10 +108,10 @@ export function AppSidebar() {
           <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
             <div className="flex items-center gap-2">
               <div className="w-4 h-px bg-muted-foreground/30"></div>
-              <Link href="/category/new-category">
+              <Link href="/category/add-category">
                 <span
                   className={`flex items-center gap-2 text-sm cursor-pointer ${
-                    pathname.startsWith("/category/new-category")
+                    pathname.startsWith("/category/add-category")
                       ? "text-red-600 font-bold"
                       : "text-muted-foreground"
                   }`}
@@ -124,10 +124,10 @@ export function AppSidebar() {
 
             <div className="flex items-center gap-2">
               <div className="w-4 h-px bg-muted-foreground/30"></div>
-              <Link href="/category/preview">
+              <Link href="/category/preview-category">
                 <span
                   className={`flex items-center gap-2 text-sm cursor-pointer ${
-                    pathname.startsWith("/category/preview")
+                    pathname.startsWith("/category/preview-category")
                       ? "text-red-600 font-bold"
                       : "text-muted-foreground"
                   }`}
@@ -153,22 +153,6 @@ export function AppSidebar() {
             </div>
           </Link>
           <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-px bg-muted-foreground/30"></div>
-              <Link href="/users/users-list">
-                <span
-                  className={`flex items-center gap-2 text-sm cursor-pointer ${
-                    pathname.startsWith("/users/users-list")
-                      ? "text-red-600 font-bold"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <Users className="w-4 h-4" />
-                   Users List
-                </span>
-              </Link>
-            </div>
-
             <div className="flex items-center gap-2">
               <div className="w-4 h-px bg-muted-foreground/30"></div>
               <Link href="/users/add-user">
