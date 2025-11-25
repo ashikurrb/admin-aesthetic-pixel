@@ -15,7 +15,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { MoreHorizontal, Edit, Trash } from "lucide-react";
+import { useState } from "react";
+import AddNewUser from "../components/CreateNewUser";
 
 const users = [
   { id: 1, name: "John Doe", email: "john@gmail.com", role: "Super Admin" },
@@ -36,13 +48,27 @@ const users = [
 ];
 
 export default function UsersList() {
+  const [addUserModalOpen, setAddUserModalOpen] = useState(false);
   return (
     <div className="container mx-auto p-8">
       <div className="flex justify-between items-center mb-4">
         <span className="text-xl font-bold">Users List</span>
-        <Button variant="destructive" className="font-bold cursor-pointer">
-          Add User
-        </Button>
+
+        <Dialog open={addUserModalOpen} onOpenChange={setAddUserModalOpen}>
+          <DialogTrigger asChild>
+            <Button variant="destructive" className="font-bold cursor-pointer">
+              Add User
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-[1200px] w-full max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+            </DialogHeader>
+            <div>
+              <AddNewUser />
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Table className="bg-[#3f4f5f7] rounded-lg overflow-hidden mt-3">
