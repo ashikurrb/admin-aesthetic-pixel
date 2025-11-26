@@ -50,7 +50,7 @@ export default function Login() {
                 <span className="text-red-600 dark:text-red-500">
                   Pixel
                 </span>{" "}
-                Studio
+                Studio LLC
               </h1>
               <p className="text-lg text-gray-500 dark:text-gray-400 max-w-md mx-auto lg:mx-0">
                 Crafting digital experiences with precision and passion. Please
@@ -59,7 +59,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
+          <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
             <Card className="w-full max-w-md mx-auto border-gray-200 dark:border-gray-800 shadow-2xl shadow-gray-200/50 dark:shadow-black/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
               <CardHeader className="space-y-1 pb-6">
                 <CardTitle className="text-2xl font-bold tracking-tight">
