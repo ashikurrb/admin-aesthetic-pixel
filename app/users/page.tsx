@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import AddNewUser from "../components/CreateNewUser";
 import axios from "axios";
 import { toast } from "sonner";
+import dayjs from "dayjs";
 
 interface User {
   _id: string;
@@ -34,6 +35,8 @@ interface User {
   phone: string;
   role: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface UsersResponse {
@@ -112,6 +115,12 @@ export default function UsersList() {
               Status
             </TableHead>
             <TableHead className="dark:text-gray-100 font-extrabold">
+              Created
+            </TableHead>
+            <TableHead className="dark:text-gray-100 font-extrabold">
+              Updated
+            </TableHead>
+            <TableHead className="dark:text-gray-100 font-extrabold">
               Action
             </TableHead>
           </TableRow>
@@ -145,6 +154,12 @@ export default function UsersList() {
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
                   {user?.status}
+                </TableCell>
+                <TableCell className="dark:text-gray-100">
+                  {dayjs(user?.createdAt).format("DD-MMM-YYYY hh:mm A")}
+                </TableCell>
+                <TableCell className="dark:text-gray-100">
+                  {dayjs(user?.updatedAt).format("DD-MMM-YYYY hh:mm A")}
                 </TableCell>
 
                 <TableCell className="dark:text-gray-100">
