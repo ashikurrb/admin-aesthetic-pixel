@@ -12,9 +12,53 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import Link from "next/link"; // Better for Next.js routing
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  //handle Login
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    //handle form
+    const loginData = new FormData();
+    loginData.append("email", email);
+    loginData.append("phone", phone);
+    loginData.append("password", password);
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/login`,
+        loginData
+      );
+
+      toast.success(res.data && res.data.message);
+
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("from") || "/";
+      router.push(redirectTo);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || "Something went wrong");
+      } else {
+        console.error(error);
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-950 overflow-hidden">
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -60,69 +104,81 @@ export default function Login() {
           </div>
 
           <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-            <Card className="w-full max-w-md mx-auto border-gray-200 dark:border-gray-800 shadow-2xl shadow-gray-200/50 dark:shadow-black/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-              <CardHeader className="space-y-1 pb-6">
-                <CardTitle className="text-2xl font-bold tracking-tight">
-                  Sign in
-                </CardTitle>
-                <CardDescription className="text-gray-500 dark:text-gray-400">
-                  Enter your credentials to access your account
-                </CardDescription>
-              </CardHeader>
+            <form onSubmit={handleSubmit}>
+              <Card className="w-full max-w-md mx-auto border-gray-200 dark:border-gray-800 shadow-2xl shadow-gray-200/50 dark:shadow-black/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+                <CardHeader className="space-y-1 pb-6">
+                  <CardTitle className="text-2xl font-bold tracking-tight">
+                    Sign in
+                  </CardTitle>
+                  <CardDescription className="text-gray-500 dark:text-gray-400">
+                    Enter your credentials to access your account
+                  </CardDescription>
+                </CardHeader>
 
-              <CardContent>
-                <form className="space-y-5">
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="email"
-                      className="text-gray-700 dark:text-gray-300"
-                    >
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="name@aestheticpixel.com"
-                      className="h-11 bg-gray-50 dark:bg-gray-950/50 focus-visible:ring-red-500/30 border-gray-200 dark:border-gray-800"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <div className="flex items-center justify-between">
+                <CardContent>
+                  <form className="space-y-5">
+                    <div className="grid gap-2">
                       <Label
-                        htmlFor="password"
+                        htmlFor="email"
                         className="text-gray-700 dark:text-gray-300"
                       >
-                        Password
+                        Email
                       </Label>
-                      <Link
-                        href="#"
-                        className="text-sm font-medium text-red-600 dark:text-red-500 hover:text-red-500 hover:underline"
-                      >
-                        Forgot password?
-                      </Link>
+                      <Input
+                        value={email || phone}
+                        onChange={(e) => (
+                          setEmail(e.target.value), setPhone(e.target.value)
+                        )}
+                        placeholder="name@aestheticpixel.com"
+                        className="h-11 bg-gray-50 dark:bg-gray-950/50 focus-visible:ring-red-500/30 border-gray-200 dark:border-gray-800"
+                        required
+                      />
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      className="h-11 bg-gray-50 dark:bg-gray-950/50 focus-visible:ring-red-500/30 border-gray-200 dark:border-gray-800"
-                      required
-                    />
-                  </div>
-                </form>
-              </CardContent>
 
-              <CardFooter className="flex flex-col gap-4 pt-2 mb-3">
-                <Button
-                  variant="default"
-                  type="submit"
-                  className="w-full h-12 text-base font-semibold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 transition-all hover:scale-[1.01] cursor-pointer"
-                >
-                  Log In
-                </Button>
-              </CardFooter>
-            </Card>
+                    <div className="grid gap-2">
+                      <div className="flex items-center justify-between">
+                        <Label
+                          htmlFor="password"
+                          className="text-gray-700 dark:text-gray-300"
+                        >
+                          Password
+                        </Label>
+                        <Link
+                          href="#"
+                          className="text-sm font-medium text-red-600 dark:text-red-500 hover:text-red-500 hover:underline"
+                        >
+                          Forgot password?
+                        </Link>
+                      </div>
+                      <Input
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        id="password"
+                        type="password"
+                        className="h-11 bg-gray-50 dark:bg-gray-950/50 focus-visible:ring-red-500/30 border-gray-200 dark:border-gray-800"
+                        required
+                      />
+                    </div>
+                  </form>
+                </CardContent>
+
+                <CardFooter className="flex flex-col gap-4 pt-2 mb-3">
+                  <Button
+                    variant="default"
+                    type="submit"
+                    className="w-full h-12 text-base font-semibold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 transition-all hover:scale-[1.01] cursor-pointer"
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner /> Signing In...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </form>
           </div>
         </div>
       </div>
