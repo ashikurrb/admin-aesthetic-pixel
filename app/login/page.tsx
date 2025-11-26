@@ -18,12 +18,14 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "../context/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { auth, setAuth } = useAuth();
   const router = useRouter();
 
   //handle Login
@@ -41,12 +43,20 @@ export default function Login() {
         `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/login`,
         loginData
       );
-
+      if (res & res.data.success) {
+        setAuth({
+          ...auth,
+          user: res.data.user,
+          token: res.data.token,
+        });
+      }
       toast.success(res.data && res.data.message);
 
-      const params = new URLSearchParams(window.location.search);
-      const redirectTo = params.get("from") || "/";
-      router.push(redirectTo);
+      if (res.data.success === true) {
+        const params = new URLSearchParams(window.location.search);
+        const redirectTo = params.get("from") || "/";
+        router.push(redirectTo);
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.error || "Something went wrong");

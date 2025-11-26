@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import { ThemeProvider } from "next-themes";
 import { usePathname } from "next/navigation";
+import { AuthProvider } from "./context/auth";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -34,29 +35,31 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster theme="dark" position="top-center" offset={35} />
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster theme="dark" position="top-center" offset={35} />
 
-          {!hideHeader && <Header />}
-          {!hideHeader ? (
-            <div className="flex pt-[90px] min-h-[calc(100vh-90px)]">
-              <SidebarProvider>
-                <AppSidebar />
-                <div className="flex-1 overflow-y-auto p-4">
-                  <SidebarTrigger className="md:hidden fixed bg-white dark:bg-gray-800 border p-5 rounded-md z-50" />
-                  <main className="mt-6">{children}</main>
-                </div>
-              </SidebarProvider>
-            </div>
-          ) : (
-            <main className="min-h-screen">{children}</main>
-          )}
-        </ThemeProvider>
+            {!hideHeader && <Header />}
+            {!hideHeader ? (
+              <div className="flex pt-[90px] min-h-[calc(100vh-90px)]">
+                <SidebarProvider>
+                  <AppSidebar />
+                  <div className="flex-1 overflow-y-auto p-4">
+                    <SidebarTrigger className="md:hidden fixed bg-white dark:bg-gray-800 border p-5 rounded-md z-50" />
+                    <main className="mt-6">{children}</main>
+                  </div>
+                </SidebarProvider>
+              </div>
+            ) : (
+              <main className="min-h-screen">{children}</main>
+            )}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

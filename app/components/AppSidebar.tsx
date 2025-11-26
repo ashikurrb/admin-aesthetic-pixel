@@ -19,12 +19,22 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
+import { useAuth } from "../context/auth";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { setAuth } = useAuth();
 
   const activeClass = "bg-red-600 text-white rounded-md p-2 w-full";
   const inactiveClass = "hover:bg-muted/50 rounded-md p-2 w-full";
+
+  const handleLogout = () => {
+    setAuth({ user: null, token: null });
+    toast.success("Logged out successfully");
+    window.location.href = "/login";
+  };
 
   return (
     <Sidebar className="fixed left-0 top-25 w-64 h-[calc(100vh-90px)]">
@@ -197,9 +207,12 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="flex mb-10 ms-5">
-        <div className="flex items-center gap-3 font-bold mt-4 cursor-pointer hover:bg-red-600 rounded-md max-w-full py-2 px-4 text-red-600 hover:text-white transition-colors">
+        <Button
+          onClick={handleLogout}
+          className="flex items-center gap-3 font-bold mt-4 cursor-pointer hover:bg-red-600 rounded-md max-w-full py-2 px-4 text-red-600 hover:text-white transition-colors"
+        >
           <CirclePower className="w-4 h-4" /> Logout
-        </div>
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );
