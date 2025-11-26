@@ -17,40 +17,60 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MoreHorizontal, Edit, Trash } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddNewUser from "../components/CreateNewUser";
+import axios from "axios";
+import { toast } from "sonner";
 
-const users = [
-  { id: 1, name: "John Doe", email: "john@gmail.com", role: "Super Admin" },
-  { id: 2, name: "Jane Smith", email: "jane@gmail.com", role: "Admin" },
-  { id: 3, name: "Alice Johnson", email: "alice@gmail.com", role: "User" },
-  {
-    id: 4,
-    name: "Bob Williams",
-    email: "bob@gmail.com",
-    role: "Product Manager",
-  },
-  {
-    id: 5,
-    name: "Emma Brown",
-    email: "emma@gmail.com",
-    role: "Content Manager",
-  },
-];
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+}
+
+interface UsersResponse {
+  success: boolean;
+  message: string;
+  users: User[];
+}
 
 export default function UsersList() {
   const [addUserModalOpen, setAddUserModalOpen] = useState(false);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [spinnerLoading, setSpinnerLoading] = useState(false);
+
+  // Fetch all users
+  const getAllUsers = async () => {
+    try {
+      setSpinnerLoading(true);
+
+      const res = await axios.get<UsersResponse>(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/all-users`
+      );
+
+      setAllUsers(res.data.users);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching users");
+    } finally {
+      setSpinnerLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
+
   return (
     <div className="container mx-auto p-8">
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <span className="text-xl font-bold">Users List</span>
 
@@ -62,20 +82,18 @@ export default function UsersList() {
           </DialogTrigger>
 
           <DialogContent className="sm:max-w-[1200px] w-full max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-            </DialogHeader>
-            <div>
-              <AddNewUser />
-            </div>
+            <DialogHeader />
+            <AddNewUser />
           </DialogContent>
         </Dialog>
       </div>
 
+      {/* Table */}
       <Table className="bg-[#3f4f5f7] rounded-lg overflow-hidden mt-3">
-        <TableHeader className="bg-[#f4f5f7]">
+        <TableHeader className="bg-[#f4f5f7] dark:bg-gray-800">
           <TableRow>
             <TableHead className="dark:text-gray-100 font-extrabold">
-              ID
+              #
             </TableHead>
             <TableHead className="dark:text-gray-100 font-extrabold">
               Name
@@ -84,7 +102,13 @@ export default function UsersList() {
               Email
             </TableHead>
             <TableHead className="dark:text-gray-100 font-extrabold">
+              Phone
+            </TableHead>
+            <TableHead className="dark:text-gray-100 font-extrabold">
               Role
+            </TableHead>
+            <TableHead className="dark:text-gray-100 font-extrabold">
+              Status
             </TableHead>
             <TableHead className="dark:text-gray-100 font-extrabold">
               Action
@@ -93,19 +117,35 @@ export default function UsersList() {
         </TableHeader>
 
         <TableBody>
-          {users.length ? (
-            users.map((user) => (
-              <TableRow key={user.id} className="dark:hover:bg-gray-700">
-                <TableCell className="dark:text-gray-100">{user.id}</TableCell>
+          {spinnerLoading ? (
+            <TableRow>
+              <TableCell
+                colSpan={5}
+                className="text-center py-4 dark:text-gray-100"
+              >
+                Loading users...
+              </TableCell>
+            </TableRow>
+          ) : allUsers.length > 0 ? (
+            allUsers.map((user, index) => (
+              <TableRow key={user._id} className="dark:hover:bg-gray-700">
+                <TableCell className="dark:text-gray-100">{index + 1}</TableCell>
                 <TableCell className="dark:text-gray-100">
-                  {user.name}
+                  {user?.name}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
-                  {user.email}
+                  {user?.email}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
-                  {user.role}
+                  {user?.phone}
                 </TableCell>
+                <TableCell className="dark:text-gray-100">
+                  {user?.role}
+                </TableCell>
+                <TableCell className="dark:text-gray-100">
+                  {user?.status}
+                </TableCell>
+
                 <TableCell className="dark:text-gray-100">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -117,18 +157,20 @@ export default function UsersList() {
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent align="end" className="w-36">
                       <DropdownMenuItem
                         className="flex items-center gap-2 cursor-pointer font-bold"
-                        onClick={() => alert(`Edit user ${user.id}`)}
+                        onClick={() => alert(`Edit user ${user._id}`)}
                       >
                         <Edit className="w-4 h-4" /> Edit
                       </DropdownMenuItem>
+
                       <DropdownMenuItem
                         className="flex items-center gap-2 text-destructive cursor-pointer font-bold"
-                        onClick={() => alert(`Delete user ${user.id}`)}
+                        onClick={() => alert(`Delete user ${user._id}`)}
                       >
-                        <Trash className="w-4 h-4 font-bold" /> Delete
+                        <Trash className="w-4 h-4" /> Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -137,7 +179,10 @@ export default function UsersList() {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center dark:text-gray-100">
+              <TableCell
+                colSpan={5}
+                className="text-center py-4 dark:text-gray-100"
+              >
                 No users found.
               </TableCell>
             </TableRow>

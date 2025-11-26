@@ -32,8 +32,6 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-
-    //handle form
     const loginData = new FormData();
     loginData.append("email", email);
     loginData.append("phone", phone);
