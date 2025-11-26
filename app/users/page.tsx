@@ -27,6 +27,7 @@ import AddNewUser from "../components/CreateNewUser";
 import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
+import { Spinner } from "@/components/ui/spinner";
 
 interface User {
   _id: string;
@@ -130,10 +131,10 @@ export default function UsersList() {
           {spinnerLoading ? (
             <TableRow>
               <TableCell
-                colSpan={5}
+                colSpan={9}
                 className="text-center py-4 dark:text-gray-100"
               >
-                Loading users...
+             <Spinner/>   Loading users...
               </TableCell>
             </TableRow>
           ) : allUsers.length > 0 ? (
