@@ -3,8 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/ui/theme-toggle";
+import { useAuth } from "../context/auth";
 
 export default function Header() {
+  const {auth, setAuth} = useAuth();
   return (
     <header className="w-full py-2 fixed z-50 bg-white dark:bg-black border-b border-muted-foreground/10 top-0">
       <div className="container mx-auto flex items-center justify-between px-4 h-auto">
@@ -41,8 +43,8 @@ export default function Header() {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start">
-            <span className="font-bold text-sm">Jake Moor</span>
-            <span className="text-xs text-muted-foreground">Super Admin</span>
+            <span className="font-bold text-sm">{auth?.user?.name}</span>
+            <span className="text-xs text-muted-foreground">{auth?.user?.role}</span>
           </div>
           <ModeToggle />
         </div>

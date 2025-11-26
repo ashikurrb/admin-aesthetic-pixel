@@ -17,7 +17,9 @@ interface User {
   id?: string;
   name?: string;
   email?: string;
-}
+  phone?: string;
+  role?: string;
+};
 
 interface AuthState {
   user: User | null;
@@ -43,7 +45,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const [auth, setAuth] = useState<AuthState>(defaultState);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter(); // Initialize Router
+  const router = useRouter();
 
   // 1. Initialize Auth from Cookies on Mount
   useEffect(() => {
@@ -84,29 +86,18 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [auth.token]);
 
-  // 3. Helper to handle Logout (FIXED)
   const logout = () => {
-    // A. Enable loading state immediately to mask the UI
     setLoading(true);
 
     try {
-      // B. Destroy the cookie
       destroyCookie(null, "auth", { path: "/" });
 
-      // C. Clear the state
       setAuth(defaultState);
-
-      // D. Redirect explicitly
       router.replace("/login"); 
     } catch (error) {
       console.error("Logout failed", error);
-      setLoading(false); // Only disable loading if error occurs
+      setLoading(false);
     }
-    
-    // Note: We do NOT set loading(false) here on success, 
-    // because the page is about to unmount/redirect. 
-    // If you stay on the same page, you might want to add:
-    // setTimeout(() => setLoading(false), 500); 
   };
 
   // 4. Sync State changes to Cookies
@@ -122,9 +113,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   return (
     <AuthContext.Provider value={{ auth, setAuth, loading, logout }}>
       {loading ? (
-        // Ensure this loading spinner is full screen and blocks content
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-           {/* Add a visible spinner here if needed */}
            <span className="text-gray-500">Loading...</span>
         </div>
       ) : (

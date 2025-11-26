@@ -85,16 +85,16 @@ export default function Login() {
                 alt="Aesthetic Pixel Logo"
                 width={350}
                 height={90}
-                className="relative block dark:hidden w-40 md:w-[350px] h-auto object-contain"
+                className="relative block dark:hidden w-40 md:w-[150px] h-auto object-contain"
                 priority
               />
 
               <Image
                 src="/logoDark.png"
                 alt="Aesthetic Pixel Logo Dark"
-                width={350}
+                width={250}
                 height={90}
-                className="relative hidden dark:block w-40 md:w-[350px] h-auto object-contain"
+                className="relative hidden dark:block w-40 md:w-[150px] h-auto object-contain"
                 priority
               />
             </div>

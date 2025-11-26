@@ -21,7 +21,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "../context/auth";
-import { Button } from "@/components/ui/button";
+import { destroyCookie } from "nookies";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -32,6 +32,7 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     setAuth({ user: null, token: null });
+    destroyCookie(null, "auth", { path: "/" });
     toast.success("Logged out successfully");
     window.location.href = "/login";
   };
@@ -207,12 +208,12 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="flex mb-10 ms-5">
-        <Button
+        <button
           onClick={handleLogout}
-          className="flex items-center gap-3 font-bold mt-4 cursor-pointer hover:bg-red-600 rounded-md max-w-full py-2 px-4 text-red-600 hover:text-white transition-colors"
+          className="flex items-center gap-3 font-bold mt-4 cursor-pointer hover:bg-red-700 rounded-md py-2 px-5 hover:text-white"
         >
           <CirclePower className="w-4 h-4" /> Logout
-        </Button>
+        </button>
       </SidebarFooter>
     </Sidebar>
   );
