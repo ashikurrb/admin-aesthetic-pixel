@@ -140,7 +140,7 @@ export default function UsersList() {
                 colSpan={9}
                 className="text-center py-4 dark:text-gray-100"
               >
-                <div className="flex justify-center items-center space-x-2">
+                <div className="flex justify-center items-center space-x-2 py-15">
                   <Spinner />
                   <span>Loading users...</span>
                 </div>
