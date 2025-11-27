@@ -1,6 +1,6 @@
 {
-  "name": "Aesthetic Pixel Studio",
-  "short_name": "Aesthetic Pixel",
+  "name": "APS Admin",
+  "short_name": "APS Admin",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -17,4 +17,4 @@
       "type": "image/png"
     }
   ]
-}
+};
