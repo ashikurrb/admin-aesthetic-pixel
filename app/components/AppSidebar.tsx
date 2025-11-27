@@ -163,7 +163,7 @@ export function AppSidebar() {
               Users
             </div>
           </Link>
-          <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
+          {/* <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
             <div className="flex items-center gap-2">
               <div className="w-4 h-px bg-muted-foreground/30"></div>
               <Link href="/users/add-user">
@@ -179,7 +179,7 @@ export function AppSidebar() {
                 </span>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Settings */}

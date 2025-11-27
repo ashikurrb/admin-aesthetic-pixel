@@ -21,6 +21,16 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddNewUser from "../components/CreateNewUser";
@@ -51,6 +61,8 @@ export default function UsersList() {
   const [addUserModalOpen, setAddUserModalOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [spinnerLoading, setSpinnerLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   // Fetch all users
   const getAllUsers = async () => {
@@ -67,6 +79,34 @@ export default function UsersList() {
       toast.error("Error fetching users");
     } finally {
       setSpinnerLoading(false);
+    }
+  };
+
+  // delete user
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      setDeleteLoading(true);
+      const { data } = await axios.delete<UsersResponse>(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/delete-user/${userToDelete}`
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getAllUsers();
+        setUserToDelete(null); // Close the dialog on success
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.error || "Something went wrong");
+      } else {
+        console.error(error);
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -216,10 +256,9 @@ export default function UsersList() {
                       >
                         <Edit className="w-4 h-4" /> Edit
                       </DropdownMenuItem>
-
                       <DropdownMenuItem
                         className="flex items-center gap-2 text-destructive cursor-pointer font-bold"
-                        onClick={() => alert(`Delete user ${user._id}`)}
+                        onClick={() => setUserToDelete(user._id)}
                       >
                         <Trash className="w-4 h-4" /> Delete
                       </DropdownMenuItem>
@@ -240,6 +279,47 @@ export default function UsersList() {
           )}
         </TableBody>
       </Table>
+
+      <AlertDialog
+        open={!!userToDelete}
+        onOpenChange={(open) => !open && setUserToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              user, including their all Data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={deleteLoading}
+              className="cursor-pointer"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteUser();
+              }}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? (
+                <div className="flex items-center gap-2">
+                  <Spinner className="text-white" /> Deleting...
+                </div>
+              ) : (
+                <>
+                  <Trash className="w-4 h-4" /> Delete
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

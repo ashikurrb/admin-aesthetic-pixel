@@ -85,7 +85,6 @@ export default function AddNewUser({
 
       onUserCreated?.();
       onClose?.();
-      redirect("/users");
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.error || "Something went wrong");
