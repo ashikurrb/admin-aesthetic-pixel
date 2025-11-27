@@ -82,13 +82,16 @@ export default function UsersList() {
 
         <Dialog open={addUserModalOpen} onOpenChange={setAddUserModalOpen}>
           <DialogTrigger asChild>
-            <Button variant="destructive" className="font-bold cursor-pointer flex items-center">
-             <UserPlus className="font-bold"/> Add User
+            <Button
+              variant="destructive"
+              className="font-bold cursor-pointer flex items-center"
+            >
+              <UserPlus className="font-bold" /> Add User
             </Button>
           </DialogTrigger>
 
           <DialogContent className="sm:max-w-[1100px] w-full max-h-[90vh] overflow-y-auto">
-            <DialogHeader >
+            <DialogHeader>
               <span className="text-xl font-bold">Add New User</span>
             </DialogHeader>
             <AddNewUser
@@ -181,8 +184,8 @@ export default function UsersList() {
                   <Badge
                     className={`
     capitalize
-    ${user?.status === "Active" ? "bg-blue-600 font-bold text-white" : ""}
-    ${user?.status === "Blocked" ? "bg-red-600 font-bold text-white" : ""}
+    ${user?.status === "Active" ? "bg-green-700 font-bold text-white" : ""}
+    ${user?.status === "Blocked" ? "bg-red-500 font-bold text-white" : ""}
   `}
                   >
                     {user?.status}
