@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2, X, Loader2, UploadCloud } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
 
 const permissionsList = [
   { value: "view-dashboard", label: "View Dashboard" },
