@@ -202,9 +202,7 @@ export default function UsersList() {
                 <TableCell className="dark:text-gray-100">
                   <div className="flex gap-2 items-center">
                     <Avatar>
-                      <AvatarImage
-                        src={user?.avatar}
-                      />
+                      <AvatarImage src={user?.avatar ?? "/demoAvatar.png"} alt={user?.name ?? "User Avatar"} />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <span className="font-bold"> {user?.name}</span>
