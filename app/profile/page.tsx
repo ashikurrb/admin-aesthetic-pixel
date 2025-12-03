@@ -38,6 +38,7 @@ export default function Profile() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const demoAvatar = "/demoAvatar.png";
+
   return (
     <div className="min-h-screen bg-background py-10">
       <div className="container md:px-20 space-y-8">
@@ -68,9 +69,9 @@ export default function Profile() {
                   <Image
                     src={
                       avatar
-                        ? typeof avatar === "string"
-                          ? avatar
-                          : URL.createObjectURL(avatar)
+                        ? URL.createObjectURL(avatar)
+                        : auth?.user?.avatar
+                        ? auth.user.avatar
                         : demoAvatar
                     }
                     alt="profile-img"
@@ -184,7 +185,7 @@ export default function Profile() {
               </div>
             </CardContent>
 
-            {/* NEW FOOTER SECTION */}
+            {/* FOOTER SECTION */}
             <CardFooter className="border-t">
               <div className="flex w-full justify-between items-center text-xs text-muted-foreground">
                 <div className="flex items-center gap-1.5" title="Date Joined">

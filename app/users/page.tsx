@@ -44,6 +44,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface User {
   _id: string;
   name: string;
+  avatar: string | null;
   email: string;
   phone: string;
   role: string;
@@ -202,7 +203,7 @@ export default function UsersList() {
                   <div className="flex gap-2 items-center">
                     <Avatar>
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
+                        src={user?.avatar}
                       />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>

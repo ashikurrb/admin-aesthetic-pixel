@@ -49,52 +49,53 @@ export default function AddNewUser({
     );
   };
 
-  const handleCreate = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+const handleCreate = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const createNewUser = new FormData();
-    createNewUser.append("name", name);
-    createNewUser.append("email", email);
-    createNewUser.append("phone", phone);
-    createNewUser.append("role", role);
-    createNewUser.append("password", password);
-    createNewUser.append("permissions", JSON.stringify(permissions));
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("phone", phone);
+  formData.append("role", role);
+  formData.append("password", password);
+  formData.append("permissions", JSON.stringify(permissions));
 
-    if (avatar) {
-      createNewUser.append("avatar", avatar);
-    }
+  if (avatar) {
+    formData.append("avatar", avatar); // field name matches multer
+  }
 
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/create-user`,
-        createNewUser
-      );
-
-      toast.success(res.data && res.data.message);
-
-      // Reset form values
-      setName("");
-      setEmail("");
-      setPhone("");
-      setRole("");
-      setPassword("");
-      setAvatar(null);
-      setPermissions([]);
-
-      onUserCreated?.();
-      onClose?.();
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.message || "Something went wrong");
-      } else {
-        console.error(error);
-        toast.error("Something went wrong");
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/create-user`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
+
+    toast.success(res.data?.message);
+
+    // Reset
+    setName("");
+    setEmail("");
+    setPhone("");
+    setRole("");
+    setPassword("");
+    setAvatar(null);
+    setPermissions([]);
+
+    onUserCreated?.();
+    onClose?.();
+
+  } catch (error: any) {
+    toast.error(error.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 md:p-6">
