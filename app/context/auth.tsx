@@ -10,7 +10,7 @@ import {
   useLayoutEffect,
 } from "react";
 import { parseCookies, setCookie, destroyCookie } from "nookies";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 
 // --- Types ---
 interface User {

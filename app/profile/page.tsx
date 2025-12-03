@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import {
   Mail,
   Phone,
@@ -10,6 +10,7 @@ import {
   UploadCloud,
   CalendarDays,
   Clock,
+  Check,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,14 +31,88 @@ import Image from "next/image";
 import { useAuth } from "../context/auth";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import axios from "axios";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { setCookie } from "nookies";
 
 dayjs.extend(relativeTime);
 
 export default function Profile() {
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const [avatar, setAvatar] = useState<File | null>(null);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
   const demoAvatar = "/demoAvatar.png";
+
+  const handlePasswordChange = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("oldPassword", oldPassword);
+    formData.append("newPassword", newPassword);
+    formData.append("confirmNewPassword", confirmNewPassword);
+
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-password/${auth?.user?.id}`,
+        formData
+      );
+
+      toast.success(data?.message);
+
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // handle avatar upload
+  const handleAvatarUpdate = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!avatar) return;
+    setAvatarLoading(true);
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-avatar/${auth?.user?.id}`,
+        formData
+      );
+      const updatedUser = {
+        ...auth.user,
+        avatar: data?.user?.avatar || data?.avatar,
+      };
+
+      const updatedAuth = {
+        ...auth,
+        user: updatedUser,
+      };
+
+      setAuth(updatedAuth);
+
+      setCookie(null, "auth", JSON.stringify(updatedAuth), {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+      });
+
+      toast.success(data?.message || "Avatar updated successfully");
+      setAvatar(null);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background py-10">
@@ -63,8 +138,11 @@ export default function Profile() {
             </CardHeader>
 
             <CardContent className="pb-6">
-              {/* Avatar Section */}
-              <div className="flex flex-col items-center justify-center mb-8">
+              {/* Avatar Form */}
+              <form
+                onSubmit={handleAvatarUpdate}
+                className="flex flex-col items-center justify-center mb-8"
+              >
                 <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-muted shadow-sm mb-4 bg-muted">
                   <Image
                     src={
@@ -85,7 +163,7 @@ export default function Profile() {
                     <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
                       <UploadCloud className="w-4 h-4 mr-2" />
                       <span className="max-w-[120px] truncate">
-                        {avatar ? avatar.name : "Upload Photo"}
+                        {avatar ? "Change" : "Upload Photo"}
                       </span>
                     </div>
                     <Input
@@ -98,30 +176,44 @@ export default function Profile() {
                         e.target.value = "";
                       }}
                       className="hidden"
-                      disabled={loading}
+                      disabled={avatarLoading}
                     />
                   </Label>
 
                   {avatar && (
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      type="button"
-                      className="h-9 w-9 cursor-pointer"
-                      disabled={loading}
-                      onClick={() => setAvatar(null)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        className="h-9 w-9 cursor-pointer"
+                        disabled={avatarLoading}
+                      >
+                        {avatarLoading ? (
+                          <Spinner className="w-4 h-4 text-white" />
+                        ) : (
+                          <Check className="w-4 h-4" />
+                        )}
+                      </Button>
+
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        type="button"
+                        className="h-9 w-9 cursor-pointer"
+                        disabled={avatarLoading}
+                        onClick={() => setAvatar(null)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
                 </div>
-              </div>
+              </form>
 
               <Separator className="my-6" />
 
               {/* User Details Grid */}
               <div className="space-y-5">
-                {/* Full Name */}
                 <div className="flex items-start space-x-3">
                   <User className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
@@ -134,7 +226,6 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* Email */}
                 <div className="flex items-start space-x-3">
                   <Mail className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
@@ -147,7 +238,6 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* Phone */}
                 <div className="flex items-start space-x-3">
                   <Phone className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
@@ -160,7 +250,6 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* Role */}
                 <div className="flex items-start space-x-3">
                   <Award className="w-5 h-5 text-muted-foreground mt-0.5" />
                   <div className="space-y-1">
@@ -185,7 +274,6 @@ export default function Profile() {
               </div>
             </CardContent>
 
-            {/* FOOTER SECTION */}
             <CardFooter className="border-t">
               <div className="flex w-full justify-between items-center text-xs text-muted-foreground">
                 <div className="flex items-center gap-1.5" title="Date Joined">
@@ -206,55 +294,77 @@ export default function Profile() {
             </CardFooter>
           </Card>
 
-          {/* Right Column: Security & Notifications (8 cols) */}
           <div className="md:col-span-12 lg:col-span-8 space-y-6">
-            {/* Password Settings (Remains Editable) */}
-            <Card className="border-border/50 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">
-                  Security
-                </CardTitle>
-                <CardDescription>
-                  Update your password to keep your account secure.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input
-                    type="password"
-                    id="current-password"
-                    placeholder="••••••••"
-                    className="bg-background"
-                  />
-                </div>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input
-                      type="password"
-                      id="new-password"
-                      placeholder="••••••••"
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
-                      type="password"
-                      id="confirm-password"
-                      placeholder="••••••••"
-                      className="bg-background"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end pt-2">
-                  <Button>Update Password</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="md:col-span-12 lg:col-span-8 space-y-6">
+              <Card className="border-border/50 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold">
+                    Security
+                  </CardTitle>
+                  <CardDescription>
+                    Update your password to keep your account secure.
+                  </CardDescription>
+                </CardHeader>
 
-            {/* Notification Preferences */}
+                <CardContent className="space-y-6">
+                  <form className="space-y-6" onSubmit={handlePasswordChange}>
+                    <div className="space-y-2">
+                      <Label htmlFor="current-password">Current Password</Label>
+                      <Input
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        type="password"
+                        id="current-password"
+                        placeholder="Current Password"
+                        className="bg-background"
+                      />
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="new-password">New Password</Label>
+                        <Input
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          type="password"
+                          id="new-password"
+                          placeholder="New Password"
+                          className="bg-background"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">
+                          Confirm Password
+                        </Label>
+                        <Input
+                          value={confirmNewPassword}
+                          onChange={(e) =>
+                            setConfirmNewPassword(e.target.value)
+                          }
+                          type="password"
+                          id="confirm-password"
+                          placeholder="Confirm Password"
+                          className="bg-background"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <Button type="submit" className="cursor-pointer">
+                        {loading ? (
+                          <>
+                            <Spinner /> Updating...
+                          </>
+                        ) : (
+                          "Update Password"
+                        )}{" "}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+
             <Card className="border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">

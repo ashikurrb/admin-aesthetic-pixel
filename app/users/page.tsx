@@ -280,8 +280,8 @@ export default function UsersList() {
           ) : (
             <TableRow>
               <TableCell
-                colSpan={5}
-                className="text-center py-4 dark:text-gray-100"
+                colSpan={9}
+                className="text-center py-10 dark:text-gray-100 font-bold"
               >
                 No users found.
               </TableCell>
