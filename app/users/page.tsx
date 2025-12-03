@@ -37,9 +37,12 @@ import AddNewUser from "../components/CreateNewUser";
 import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+dayjs.extend(relativeTime);
 
 interface User {
   _id: string;
@@ -245,7 +248,7 @@ export default function UsersList() {
                   {dayjs(user?.createdAt).format("DD-MMM-YYYY hh:mm A")}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
-                  {dayjs(user?.updatedAt).format("DD-MMM-YYYY hh:mm A")}
+                  {dayjs(user?.updatedAt).fromNow()}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
                   <DropdownMenu>
