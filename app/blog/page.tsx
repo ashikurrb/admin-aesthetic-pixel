@@ -182,9 +182,9 @@ export default function BlogPage() {
       </section>
 
       {/* Recent Post */}
-      <section>
+      <section className="md:mt-0 mt-10">
         <div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <Card className="col-span-2">
               <CardHeader>
                 <div className="flex justify-between items-center">
@@ -210,7 +210,7 @@ export default function BlogPage() {
                           <Clock className="dark:text-white font-extrabold" size={16} /> {post?.date}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Eye className="dark:text-white font-extrabold" size={18} /> Views: {post?.views}
+                          <Eye className="dark:text-white font-extrabold" size={18} /> {post?.views}
                         </span>
                       </p>
                     </div>
@@ -255,7 +255,7 @@ export default function BlogPage() {
                 ))}
               </CardContent>
             </Card>
-            <Card className="col-span-1">
+            <Card className="lg:col-span-1 col-span-2 h-75">
               <CardHeader>
                 <h3 className="font-bold text-lg">Quick Actions</h3>
               </CardHeader>

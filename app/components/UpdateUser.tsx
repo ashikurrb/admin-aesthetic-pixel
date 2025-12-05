@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 const permissionsList = [
   { value: "view-dashboard", label: "View Dashboard" },
@@ -93,7 +94,7 @@ export default function UserForm({
       onSuccess?.();
       onClose?.();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -113,7 +114,7 @@ export default function UserForm({
     <div className="w-full max-w-6xl mx-auto p-4 md:p-6">
       <form onSubmit={handleUpdate}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Basic Information */}
+          {/* Left Column*/}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-card border rounded-xl shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b bg-muted/40">
@@ -167,17 +168,6 @@ export default function UserForm({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="role">Role</Label>
-                    {role && (
-                      <button
-                        type="button"
-                        onClick={() => setRole("")}
-                        className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors cursor-pointer"
-                        disabled={loading}
-                      >
-                        Clear
-                        <X className="h-3 w-3" />
-                      </button>
-                    )}
                   </div>
                   <Select
                     value={role}
@@ -189,13 +179,19 @@ export default function UserForm({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Admin" className="cursor-pointer">
-                        Admin
+                        <Badge className="bg-yellow-500 font-bold text-black">
+                          Admin
+                        </Badge>
                       </SelectItem>
                       <SelectItem value="Moderator" className="cursor-pointer">
-                        Moderator
+                        <Badge className="bg-blue-500 font-bold text-white">
+                          Moderator
+                        </Badge>
                       </SelectItem>
                       <SelectItem value="Viewer" className="cursor-pointer">
-                        Viewer
+                        <Badge className="bg-gray-500 font-bold text-white">
+                          Viewer
+                        </Badge>
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -217,10 +213,14 @@ export default function UserForm({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Active" className="cursor-pointer">
-                        Active
+                        <Badge className="bg-green-700 font-bold text-white">
+                          Active
+                        </Badge>
                       </SelectItem>
                       <SelectItem value="Blocked" className="cursor-pointer">
-                        Blocked
+                        <Badge className="bg-red-500 font-bold text-white">
+                          Blocked
+                        </Badge>
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -229,7 +229,7 @@ export default function UserForm({
             </div>
           </div>
 
-          {/* Right Column: Profile & Permissions */}
+          {/* Right Column */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-card border rounded-xl shadow-sm overflow-hidden h-full flex flex-col">
               <div className="px-6 py-4 border-b bg-muted/40 text-center lg:text-left">
@@ -239,7 +239,6 @@ export default function UserForm({
               </div>
 
               <div className="p-6 flex-1 flex flex-col">
-                {/* Avatar Section (Read Only) */}
                 <div className="flex flex-col items-center justify-center mb-8">
                   <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-muted shadow-sm mb-4 bg-muted">
                     <Image
@@ -256,7 +255,7 @@ export default function UserForm({
 
                 <div className="border-t my-4" />
 
-                {/* Permissions Section */}
+                {/* Permissions  */}
                 <div>
                   <h3 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wider">
                     Permissions
@@ -287,7 +286,6 @@ export default function UserForm({
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="mt-auto pt-8 flex gap-3">
                   <Button
                     variant="destructive"
