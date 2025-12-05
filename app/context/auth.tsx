@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // 1️⃣ Load token + user on initial load
+  // load token & user on mount
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -80,11 +80,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
   }, []);
 
-  // 2️⃣ Fetch user when token changes (THIS FIXES THE LOGIN REFRESH ISSUE)
+  // when token change, fetch user info
   useEffect(() => {
     const fetchUser = async () => {
-      if (!auth.token) return; // nothing to fetch
-
+      if (!auth.token) return;
       try {
         const { data } = await axios.get(
           `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/me`,
@@ -106,9 +105,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchUser();
-  }, [auth.token]); // 🔥 triggers AFTER login
+  }, [auth.token]); //
 
-  // 3️⃣ Axios Interceptor
+  //Axios Interceptor
   useLayoutEffect(() => {
     const authInterceptor = axios.interceptors.request.use((config) => {
       const cookies = parseCookies();
@@ -128,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.replace("/login");
   };
 
-  // 5️⃣ Sync token into cookies
+  // Sync token into cookies
   useEffect(() => {
     if (auth.token) {
       setCookie(null, "token", auth.token, {
@@ -137,6 +136,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     }
   }, [auth.token]);
+
+  //auto logout
+  useLayoutEffect(() => {
+    const responseInterceptor = axios.interceptors.response.use(
+      (res) => res,
+      (err) => {
+        if (err.response?.status === 401) {
+          destroyCookie(null, "token");
+          setAuth(defaultState);
+          router.replace("/login");
+        }
+        return Promise.reject(err);
+      }
+    );
+
+    return () => axios.interceptors.response.eject(responseInterceptor);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, loading, logout }}>
