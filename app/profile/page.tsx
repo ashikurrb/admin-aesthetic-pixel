@@ -79,14 +79,24 @@ export default function Profile() {
     e.preventDefault();
     if (!avatar) return;
     setAvatarLoading(true);
+
     const formData = new FormData();
     formData.append("avatar", avatar);
 
     try {
+      const token = auth?.token;
+
       const { data } = await axios.put(
-        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-avatar/${auth?.user?.id}`,
-        formData
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       const updatedUser = {
         ...auth.user,
         avatar: data?.user?.avatar || data?.avatar,
@@ -104,7 +114,7 @@ export default function Profile() {
         path: "/",
       });
 
-      toast.success(data?.message || "Avatar updated successfully");
+      toast.success(data?.message);
       setAvatar(null);
     } catch (error: any) {
       console.error(error);

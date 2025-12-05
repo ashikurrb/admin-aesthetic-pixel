@@ -41,6 +41,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UpdateUser from "../components/UpdateUser";
 
 dayjs.extend(relativeTime);
 
@@ -54,6 +55,8 @@ interface User {
   status: string;
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
 }
 
 interface UsersResponse {
@@ -64,7 +67,9 @@ interface UsersResponse {
 
 export default function UsersList() {
   const [addUserModalOpen, setAddUserModalOpen] = useState(false);
+  const [updateUserModalOpen, setUpdateUserModalOpen] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [spinnerLoading, setSpinnerLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
@@ -205,7 +210,10 @@ export default function UsersList() {
                 <TableCell className="dark:text-gray-100">
                   <div className="flex gap-2 items-center">
                     <Avatar>
-                      <AvatarImage src={user?.avatar ?? "/demoAvatar.png"} alt={user?.name ?? "User Avatar"} />
+                      <AvatarImage
+                        src={user?.avatar ?? "/demoAvatar.png"}
+                        alt={user?.name ?? "User Avatar"}
+                      />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <span className="font-bold"> {user?.name}</span>
@@ -246,9 +254,19 @@ export default function UsersList() {
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
                   {dayjs(user?.createdAt).format("DD-MMM-YYYY hh:mm A")}
+                  {user?.createdBy && (
+                    <div className="text-sm text-gray-500">
+                      by {user?.createdBy?.name}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
                   {dayjs(user?.updatedAt).fromNow()}
+                  {user?.createdBy && (
+                    <div className="text-sm text-gray-500">
+                      by {user?.updatedBy?.name}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="dark:text-gray-100">
                   <DropdownMenu>
@@ -265,7 +283,10 @@ export default function UsersList() {
                     <DropdownMenuContent align="end" className="w-36">
                       <DropdownMenuItem
                         className="flex items-center gap-2 cursor-pointer font-bold"
-                        onClick={() => alert(`Edit user ${user._id}`)}
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setUpdateUserModalOpen(true);
+                        }}
                       >
                         <Edit className="w-4 h-4" /> Edit
                       </DropdownMenuItem>
@@ -292,6 +313,25 @@ export default function UsersList() {
           )}
         </TableBody>
       </Table>
+
+      <Dialog open={updateUserModalOpen} onOpenChange={setUpdateUserModalOpen}>
+        <DialogContent className="sm:max-w-[1100px] w-full max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <span className="text-xl font-bold">Update User</span>
+          </DialogHeader>
+
+          {selectedUser && (
+            <UpdateUser
+              initialData={selectedUser}
+              onClose={() => {
+                setUpdateUserModalOpen(false);
+                setSelectedUser(null);
+              }}
+              onSuccess={getAllUsers}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={!!userToDelete}
