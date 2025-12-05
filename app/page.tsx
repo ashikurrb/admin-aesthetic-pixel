@@ -1,15 +1,24 @@
-'use client';
+"use client";
+
 import { useAuth } from "./context/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import AppDashboard from "./dashboard/page";
 import Login from "./login/page";
 
 export default function Home() {
-  const {auth, setAuth} = useAuth();
-  return (
-    <div className="w-full overflow-x-hidden">
-     {
-      auth?.user?<AppDashboard />:<Login />
-     }
-    </div>
-  );
+  const { auth, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !auth.token) {
+      router.replace("/login");
+    }
+  }, [loading, auth.token]);
+
+  if (loading) return <div>Loading...</div>;
+
+  if (auth.token) return <AppDashboard />;
+
+  return <Login />;
 }

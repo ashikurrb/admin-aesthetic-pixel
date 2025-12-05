@@ -23,7 +23,7 @@ interface User {
   status?: string;
   createdAt?: string;
   updatedAt?: string;
-};
+}
 
 interface AuthState {
   user: User | null;
@@ -37,37 +37,41 @@ interface AuthContextType {
   logout: () => void;
 }
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-// --- Defaults ---
 const defaultState: AuthState = { user: null, token: null };
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<AuthState>(defaultState);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // 1. Initialize Auth from Cookies on Mount
+  // 1️⃣ Load token + user on initial load
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => {
       try {
         const cookies = parseCookies();
-        const authCookie = cookies["auth"];
+        const token = cookies["token"];
 
-        if (authCookie) {
-          const parsedData = JSON.parse(authCookie);
-          setAuth({
-            user: parsedData.user,
-            token: parsedData.token,
-          });
+        if (!token) {
+          setAuth(defaultState);
+          setLoading(false);
+          return;
         }
+
+        setAuth((prev) => ({ ...prev, token }));
+
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setAuth({ token, user: data.user });
       } catch (err) {
-        console.error("Failed to parse auth cookie:", err);
-        destroyCookie(null, "auth");
+        console.error("Auth init error:", err);
+        destroyCookie(null, "token");
+        setAuth(defaultState);
       } finally {
         setLoading(false);
       }
@@ -76,49 +80,69 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     initAuth();
   }, []);
 
-  // 2. Axios Interceptor
+  // 2️⃣ Fetch user when token changes (THIS FIXES THE LOGIN REFRESH ISSUE)
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!auth.token) return; // nothing to fetch
+
+      try {
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${auth.token}` },
+          }
+        );
+
+        setAuth((prev) => ({
+          ...prev,
+          user: data.user,
+        }));
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        destroyCookie(null, "token");
+        setAuth(defaultState);
+        router.replace("/login");
+      }
+    };
+
+    fetchUser();
+  }, [auth.token]); // 🔥 triggers AFTER login
+
+  // 3️⃣ Axios Interceptor
   useLayoutEffect(() => {
     const authInterceptor = axios.interceptors.request.use((config) => {
-      if (auth.token) {
-        config.headers.Authorization = `Bearer ${auth.token}`;
-      }
+      const cookies = parseCookies();
+      const token = cookies["token"];
+
+      if (token) config.headers.Authorization = `Bearer ${token}`;
       return config;
     });
 
-    return () => {
-      axios.interceptors.request.eject(authInterceptor);
-    };
-  }, [auth.token]);
+    return () => axios.interceptors.request.eject(authInterceptor);
+  }, []);
 
+  // 4️⃣ Logout
   const logout = () => {
-    setLoading(true);
-
-    try {
-      destroyCookie(null, "auth", { path: "/" });
-
-      setAuth(defaultState);
-      router.replace("/login"); 
-    } catch (error) {
-      console.error("Logout failed", error);
-      setLoading(false);
-    }
+    destroyCookie(null, "token", { path: "/" });
+    setAuth(defaultState);
+    router.replace("/login");
   };
 
-  // 4. Sync State changes to Cookies
+  // 5️⃣ Sync token into cookies
   useEffect(() => {
-    if (auth.token && auth.user) {
-      setCookie(null, "auth", JSON.stringify(auth), {
+    if (auth.token) {
+      setCookie(null, "token", auth.token, {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
       });
     }
-  }, [auth]);
+  }, [auth.token]);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, loading, logout }}>
-      {loading ? (
+      {loading && !auth.token ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-           <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-500">Loading...</span>
         </div>
       ) : (
         children
@@ -127,13 +151,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-// --- Custom Hook ---
-const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+export const useAuth = (): AuthContextType => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  return ctx;
 };
-
-export { useAuth, AuthProvider };

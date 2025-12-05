@@ -32,6 +32,7 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     const loginData = new FormData();
     loginData.append("email", email);
     loginData.append("phone", phone);
@@ -45,17 +46,20 @@ export default function Login() {
 
       if (res && res.data.success) {
         setAuth({
-          ...auth,
-          user: res.data.user,
+          user: null,
           token: res.data.token,
         });
+
+        toast.success(res.data.message);
 
         const params = new URLSearchParams(window.location.search);
         const redirectTo = params.get("from") || "/";
         router.push(redirectTo);
+
+        return;
       }
 
-      toast.success(res.data.message);
+      toast.error("Login failed");
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data.message || "Something went wrong");

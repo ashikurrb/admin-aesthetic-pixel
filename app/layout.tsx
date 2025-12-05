@@ -28,7 +28,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const { auth } = useAuth();
 
   // Hide layout if user is NOT logged in OR is on /login explicitly
-  const hideLayout = pathname === "/login" || !auth?.user;
+  const hideLayout = pathname === "/login" || !auth?.token;
 
   return (
     <ThemeProvider
