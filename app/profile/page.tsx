@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Clock,
   Check,
+  LockKeyholeIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -68,7 +69,7 @@ export default function Profile() {
       setNewPassword("");
       setConfirmNewPassword("");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -277,6 +278,27 @@ export default function Profile() {
                         }`}
                       >
                         {auth?.user?.role}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <LockKeyholeIcon className="w-5 h-5 text-muted-foreground mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none text-muted-foreground">
+                      Status
+                    </p>
+                    <div className="text-base font-medium text-foreground">
+                      <Badge
+                        className={`capitalize my-1 ${
+                          auth?.user?.status === "Active"
+                            ? "bg-green-700 font-extrabold text-white hover:bg-green-400"
+                            : auth?.user?.status === "Blocked"
+                            ? "bg-red-500 font-bold text-white hover:bg-red-400"
+                            : "bg-gray-500 text-white hover:bg-gray-400"
+                        }`}
+                      >
+                        {auth?.user?.status}
                       </Badge>
                     </div>
                   </div>
