@@ -55,12 +55,11 @@ export default function Login() {
         router.push(redirectTo);
       }
 
-      toast.success(res.data && res.data.message);
+      toast.success(res.data.message);
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data.error || "Something went wrong");
+        toast.error(error.response.data.message || "Something went wrong");
       } else {
-        console.error(error);
         toast.error("Something went wrong");
       }
     } finally {

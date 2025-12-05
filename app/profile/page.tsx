@@ -58,7 +58,7 @@ export default function Profile() {
 
     try {
       const { data } = await axios.put(
-        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-password/${auth?.user?.id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-password`,
         formData
       );
 
