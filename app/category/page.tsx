@@ -19,6 +19,7 @@ import {
   ChevronRight,
   ChevronDown,
   Trash,
+  ChevronsUpDown,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -91,6 +92,7 @@ interface CategoryResponse {
 
 export default function CategoryTable() {
   const [spinnerLoading, setSpinnerLoading] = useState(false);
+  const [createSpinnerLoading, setCreateSpinnerLoading] = useState(false);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
   const [createCategoryModalOpen, setCreateCategoryModalOpen] = useState(false);
@@ -112,7 +114,7 @@ export default function CategoryTable() {
   // get ALL CATEGORIES
   const getAllCategories = async () => {
     try {
-      setSpinnerLoading(true);
+      setCreateSpinnerLoading(true);
       const { data } = await axios.get<ApiResponse>(
         `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/category/categories-with-subcategories`
       );
@@ -120,7 +122,7 @@ export default function CategoryTable() {
     } catch (error: any) {
       toast.error(error.response?.data?.message);
     } finally {
-      setSpinnerLoading(false);
+      setCreateSpinnerLoading(false);
     }
   };
 
@@ -187,7 +189,7 @@ export default function CategoryTable() {
           <Button
             variant="destructive"
             onClick={() => setCreateCategoryModalOpen(true)}
-            disabled={spinnerLoading}
+            disabled={createSpinnerLoading}
             className="flex items-center gap-2 cursor-pointer"
           >
             <Plus className="h-4 w-4" />
@@ -200,7 +202,7 @@ export default function CategoryTable() {
             <Table>
               <TableHeader className="bg-[#f4f5f7]  dark:bg-gray-800">
                 <TableRow>
-                  <TableHead>{/* empty space for alignment */}</TableHead>
+                  <TableHead><ChevronsUpDown size={15}/></TableHead>
                   <TableHead className="px-5">#</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
@@ -212,145 +214,169 @@ export default function CategoryTable() {
               </TableHeader>
 
               <TableBody>
-                {allCategories.map((category, i) => {
-                  const isOpen = expanded[category?._id] ?? false;
-
-                  return (
-                    <React.Fragment key={category?._id}>
-                      <TableRow className="font-medium">
-                        <TableCell>
-                          <button
-                            onClick={() => toggleRow(category?._id)}
-                            className="cursor-pointer"
-                          >
-                            {isOpen ? (
-                              <ChevronDown className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </button>
-                        </TableCell>
-                        <TableCell className="px-5">{i + 1}</TableCell>
-
-                        <TableCell>{category?.name}</TableCell>
-
-                        <TableCell className="text-muted-foreground">
-                          /{category?.slug}
-                        </TableCell>
-
-                        <TableCell className="text-muted-foreground">
-                          {category?.description}
-                        </TableCell>
-
-                        <TableCell className="text-muted-foreground text-sm">
-                          {dayjs(category.createdAt).format(
-                            "DD-MMM-YYYY hh:mm A"
-                          )}
-                          <br />
-                          by {category?.createdBy?.name}
-                        </TableCell>
-
-                        <TableCell className="text-muted-foreground text-sm">
-                          {dayjs(category?.updatedAt).fromNow()}
-                          <br />
-                          by {category?.updatedBy?.name}
-                        </TableCell>
-
-                        <TableCell className="text-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="cursor-pointer"
-                            onClick={() => {
-                              setSelectedCategory(category);
-                              setUpdateCategoryModalOpen(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-1" /> Edit
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            className="cursor-pointer"
-                            onClick={() => {
-                              setCategoryToDelete(category?._id);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-
-                      {/* SUBCATEGORY ROWS */}
-                      {isOpen &&
-                        category?.subCategories.map((sub, index) => (
-                          <TableRow key={sub?._id} className="bg-muted/20">
-                            <TableCell className="px-5">
-                              {/* Empty cell for alignment */}
+                {spinnerLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-4 dark:text-gray-100"
+                    >
+                      <div className="flex justify-center items-center space-x-2 py-15">
+                        <Spinner />
+                        <span className="font-bold">Loading categories...</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : allCategories.length !== 0 ? (
+                  <>
+                    {allCategories.map((category, i) => {
+                      const isOpen = expanded[category?._id] ?? false;
+                      return (
+                        <React.Fragment key={category?._id}>
+                          <TableRow className="font-medium">
+                            <TableCell>
+                              <button
+                                onClick={() => toggleRow(category?._id)}
+                                className="cursor-pointer"
+                              >
+                                {isOpen ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </button>
                             </TableCell>
-                            <TableCell className="px-5">
-                              <span className="text-xs text-muted-foreground">
-                                {index + 1}
-                              </span>
+                            <TableCell className="px-5">{i + 1}</TableCell>
+
+                            <TableCell>{category?.name}</TableCell>
+
+                            <TableCell className="text-muted-foreground">
+                              /{category?.slug}
                             </TableCell>
 
-                            <TableCell className="flex items-center gap-2 pl-10">
-                              <CornerDownRight className="h-4 w-4 text-muted-foreground/50" />
-                              <span className="text-sm text-muted-foreground">
-                                {sub?.name}
-                              </span>
+                            <TableCell className="text-muted-foreground">
+                              {category?.description}
                             </TableCell>
 
-                            <TableCell className="text-sm text-muted-foreground">
-                              /{sub.slug}
-                            </TableCell>
-
-                            <TableCell className="text-sm text-muted-foreground">
-                              {sub?.description}
-                            </TableCell>
-
-                            <TableCell className="text-muted-foreground text-xs">
-                              {dayjs(sub?.createdAt).format(
+                            <TableCell className="text-muted-foreground text-sm">
+                              {dayjs(category.createdAt).format(
                                 "DD-MMM-YYYY hh:mm A"
                               )}
                               <br />
-                              by {sub?.createdBy?.name}
+                              by {category?.createdBy?.name}
                             </TableCell>
 
-                            <TableCell className="text-muted-foreground text-xs">
-                              {dayjs(sub.updatedAt).fromNow()}
+                            <TableCell className="text-muted-foreground text-sm">
+                              {dayjs(category?.updatedAt).fromNow()}
                               <br />
-                              by {sub?.updatedBy?.name}
+                              by {category?.updatedBy?.name}
                             </TableCell>
 
                             <TableCell className="text-center space-x-2">
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                className="h-8 w-8 p-0 cursor-pointer"
+                                className="cursor-pointer"
                                 onClick={() => {
-                                  setSelectedSubCategory(sub);
-                                  setUpdateSubCategoryModalOpen(true);
+                                  setSelectedCategory(category);
+                                  setUpdateCategoryModalOpen(true);
                                 }}
                               >
-                                <Edit className="h-3 w-3 text-blue-600" />
+                                <Edit className="h-4 w-4 mr-1" /> Edit
                               </Button>
                               <Button
-                                variant="ghost"
+                                variant="destructive"
                                 size="sm"
-                                className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 cursor-pointer"
+                                className="cursor-pointer"
                                 onClick={() => {
-                                  setSubCategoryToDelete(sub._id);
+                                  setCategoryToDelete(category?._id);
                                 }}
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </TableCell>
                           </TableRow>
-                        ))}
-                    </React.Fragment>
-                  );
-                })}
+
+                          {/* SUBCATEGORY ROWS */}
+                          {isOpen &&
+                            category?.subCategories.map((sub, index) => (
+                              <TableRow key={sub?._id} className="bg-muted/20">
+                                <TableCell className="px-5">
+                                  {/* Empty cell for alignment */}
+                                </TableCell>
+                                <TableCell className="px-5">
+                                  <span className="text-xs text-muted-foreground">
+                                    {index + 1}
+                                  </span>
+                                </TableCell>
+
+                                <TableCell className="flex items-center gap-2 pl-10">
+                                  <CornerDownRight className="h-4 w-4 text-muted-foreground/50" />
+                                  <span className="text-sm text-muted-foreground">
+                                    {sub?.name}
+                                  </span>
+                                </TableCell>
+
+                                <TableCell className="text-sm text-muted-foreground">
+                                  /{sub.slug}
+                                </TableCell>
+
+                                <TableCell className="text-sm text-muted-foreground">
+                                  {sub?.description}
+                                </TableCell>
+
+                                <TableCell className="text-muted-foreground text-xs">
+                                  {dayjs(sub?.createdAt).format(
+                                    "DD-MMM-YYYY hh:mm A"
+                                  )}
+                                  <br />
+                                  by {sub?.createdBy?.name}
+                                </TableCell>
+
+                                <TableCell className="text-muted-foreground text-xs">
+                                  {dayjs(sub.updatedAt).fromNow()}
+                                  <br />
+                                  by {sub?.updatedBy?.name}
+                                </TableCell>
+
+                                <TableCell className="text-center space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 cursor-pointer"
+                                    onClick={() => {
+                                      setSelectedSubCategory(sub);
+                                      setUpdateSubCategoryModalOpen(true);
+                                    }}
+                                  >
+                                    <Edit className="h-3 w-3 text-blue-600" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 cursor-pointer"
+                                    onClick={() => {
+                                      setSubCategoryToDelete(sub._id);
+                                    }}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </React.Fragment>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-10 dark:text-gray-100 font-bold"
+                    >
+                      No categories found.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
