@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import AddCategory from "../components/AddCategory";
 import { Spinner } from "@/components/ui/spinner";
+import UpdateSubCategory from "../components/UpdateSubCateogory";
+import UpdateCategory from "../components/UpdateCategory";
 
 dayjs.extend(relativeTime);
 
@@ -92,6 +94,14 @@ export default function CategoryTable() {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
   const [createCategoryModalOpen, setCreateCategoryModalOpen] = useState(false);
+  const [updateCategoryModalOpen, setUpdateCategoryModalOpen] = useState(false);
+  const [updateSubCategoryModalOpen, setUpdateSubCategoryModalOpen] =
+    useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [selectedSubCategory, setSelectedSubCategory] =
+    useState<SubCategory | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [deleteSubLoading, setDeleteSubLoading] = useState(false);
@@ -99,8 +109,8 @@ export default function CategoryTable() {
     null
   );
 
-  // FETCH ALL CATEGORIES
-  const handleAllCategories = async () => {
+  // get ALL CATEGORIES
+  const getAllCategories = async () => {
     try {
       setSpinnerLoading(true);
       const { data } = await axios.get<ApiResponse>(
@@ -123,7 +133,7 @@ export default function CategoryTable() {
       );
       if (data.success) {
         toast.success(data.message);
-        handleAllCategories();
+        getAllCategories();
         setCategoryToDelete(null);
       } else {
         toast.error(data.message);
@@ -144,7 +154,7 @@ export default function CategoryTable() {
       );
       if (data.success) {
         toast.success(data.message);
-        handleAllCategories();
+        getAllCategories();
         setSubCategoryToDelete(null);
       } else {
         toast.error(data.message);
@@ -157,7 +167,7 @@ export default function CategoryTable() {
   };
 
   useEffect(() => {
-    handleAllCategories();
+    getAllCategories();
   }, []);
 
   // TOGGLE ROW
@@ -167,9 +177,8 @@ export default function CategoryTable() {
 
   return (
     <div>
-      <Card>
-        {/* FIXED HEADER */}
-        <CardHeader className="flex flex-row items-center justify-between sticky top-0 z-20 bg-white dark:bg-neutral-900 border-b">
+      <Card className="border-none shadow-none">
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Layers className="h-6 w-6" />
             Category Management
@@ -187,18 +196,18 @@ export default function CategoryTable() {
         </CardHeader>
 
         <CardContent>
-          <div className="rounded-md border">
+          <div className="rounded-md border md:p-5">
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-[#f4f5f7]  dark:bg-gray-800">
                 <TableRow>
-                  <TableHead></TableHead>
+                  <TableHead>{/* empty space for alignment */}</TableHead>
                   <TableHead className="px-5">#</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Updated</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -247,8 +256,16 @@ export default function CategoryTable() {
                           by {category?.updatedBy?.name}
                         </TableCell>
 
-                        <TableCell className="text-right space-x-2">
-                          <Button variant="outline" size="sm">
+                        <TableCell className="text-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="cursor-pointer"
+                            onClick={() => {
+                              setSelectedCategory(category);
+                              setUpdateCategoryModalOpen(true);
+                            }}
+                          >
                             <Edit className="h-4 w-4 mr-1" /> Edit
                           </Button>
                           <Button
@@ -310,7 +327,11 @@ export default function CategoryTable() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0"
+                                className="h-8 w-8 p-0 cursor-pointer"
+                                onClick={() => {
+                                  setSelectedSubCategory(sub);
+                                  setUpdateSubCategoryModalOpen(true);
+                                }}
                               >
                                 <Edit className="h-3 w-3 text-blue-600" />
                               </Button>
@@ -344,9 +365,49 @@ export default function CategoryTable() {
         <DialogContent className="overflow-y-auto dark:bg-gray-900">
           <AddCategory
             onSuccess={() => {
-              handleAllCategories();
+              getAllCategories();
             }}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Category Modal */}
+      <Dialog
+        open={updateCategoryModalOpen}
+        onOpenChange={setUpdateCategoryModalOpen}
+      >
+        <DialogContent
+          className="overflow-y-auto dark:bg-gray-900"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {selectedCategory && (
+            <UpdateCategory
+              category={selectedCategory}
+              onSuccess={() => {
+                setUpdateCategoryModalOpen(false);
+                getAllCategories();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Sub-Category Modal */}
+      <Dialog open={updateSubCategoryModalOpen}>
+        <DialogContent
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="overflow-y-auto dark:bg-gray-900"
+        >
+          {selectedSubCategory && (
+            <UpdateSubCategory
+              category={selectedSubCategory}
+              onSuccess={() => {
+                setSelectedSubCategory(null);
+                setUpdateSubCategoryModalOpen(false);
+                getAllCategories();
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
