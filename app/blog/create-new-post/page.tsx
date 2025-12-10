@@ -36,9 +36,11 @@ export default function CreateNewPost() {
     setCoverPhoto(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
-  const filteredSubs = subCategories.filter(
-    (sub) => sub.parentCategory?._id === parentCategory
-  );
+  
+ const filteredSubs = subCategories.filter(
+  (sub) => (sub.parentCategory as any)?._id === parentCategory
+);
+
   useEffect(() => {
     if (categories.length === 0) fetchCategories();
     if (subCategories.length === 0) fetchSubCategories();
@@ -118,7 +120,10 @@ export default function CreateNewPost() {
               Main Category
             </Label>
 
-            <Select name="mainCategory" onValueChange={(value) => setParentCategory(value)}>
+            <Select
+              name="mainCategory"
+              onValueChange={(value) => setParentCategory(value)}
+            >
               <SelectTrigger className="w-full bg-[#f6f7f9] py-6 mt-2">
                 <SelectValue placeholder="Select main category" />
               </SelectTrigger>
