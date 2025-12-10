@@ -1,12 +1,19 @@
 import { create } from "zustand";
 import axios from "axios";
 
+interface ParentCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
 interface SubCategory {
   _id: string;
   name: string;
   slug: string;
   description?: string;
-  parentCategory: string;
+  parentCategory: string | ParentCategory;  
 }
 
 interface SubCategoryStore {
