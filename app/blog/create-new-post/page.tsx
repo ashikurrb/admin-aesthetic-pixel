@@ -65,7 +65,11 @@ export default function CreateNewPost() {
         <div className="flex justify-between items-center p-5">
           <h1 className="text-3xl font-bold mb-5">Create New Post</h1>
           <div>
-            <Button type="submit" className="cursor-pointer" variant="destructive">
+            <Button
+              type="submit"
+              className="cursor-pointer"
+              variant="destructive"
+            >
               Save
             </Button>
           </div>
@@ -113,11 +117,17 @@ export default function CreateNewPost() {
                   </SelectTrigger>
 
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat._id} value={cat._id}>
-                        {cat.name}
+                    {categories.length === 0 ? (
+                      <SelectItem disabled value="no-category">
+                        No categories found
                       </SelectItem>
-                    ))}
+                    ) : (
+                      categories.map((cat) => (
+                        <SelectItem key={cat._id} value={cat._id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -190,8 +200,8 @@ export default function CreateNewPost() {
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center space-y-3 text-center p-4">
-                      <div className="p-4 rounded-full bg-background border shadow-sm">
-                        <CloudUpload className="h-8 w-8 text-primary" />
+                      <div className="p-4 rounded-full bg-red-700 border shadow-sm">
+                        <CloudUpload className="h-8 w-8 text-white" />
                       </div>
                       <div className="space-y-1">
                         <p className="text-sm font-medium text-foreground">
