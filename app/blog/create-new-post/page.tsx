@@ -42,9 +42,7 @@ export default function CreateNewPost() {
   const [metaDescription, setMetaDescription] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState("Draft");
-  // Unified date state
-  const [date, setDate] = useState<Date | undefined>(new Date());
-
+  const [date, setDate] = useState<Date | null>(new Date());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -390,7 +388,6 @@ export default function CreateNewPost() {
                       selected={date}
                       captionLayout="dropdown"
                       onSelect={(date) => {
-                        if (!date) return;
                         setDate(date);
                         setOpen(false);
                       }}
