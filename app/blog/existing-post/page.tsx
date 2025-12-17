@@ -87,7 +87,7 @@ export default function ExistingPost() {
 
   useEffect(() => {
     fetchAllBlogs();
-  }, [blogToDelete]);
+  }, []);
 
   return (
     <div className="mx-0 md:mx-5">
