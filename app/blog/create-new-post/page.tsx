@@ -42,7 +42,7 @@ export default function CreateNewPost() {
   const [metaDescription, setMetaDescription] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState("Draft");
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -107,7 +107,7 @@ export default function CreateNewPost() {
       setMetaDescription("");
       setExcerpt("");
       setStatus("Draft");
-      setDate(null);
+      setDate(undefined);
       toast.success(res.data?.message);
     } catch (error: any) {
       console.error(error);
@@ -385,11 +385,11 @@ export default function CreateNewPost() {
                   >
                     <Calendar
                       mode="single"
-                      selected={date ?? undefined} 
+                      selected={date}
                       captionLayout="dropdown"
-                      onSelect={(d) => {
-                        setDate(d ?? null);
-                        if (d) setOpen(false);
+                      onSelect={(selectedDate) => {
+                        setDate(selectedDate);
+                        setOpen(false);
                       }}
                     />
                   </PopoverContent>
