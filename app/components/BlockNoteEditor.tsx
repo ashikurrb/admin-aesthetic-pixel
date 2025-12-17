@@ -9,7 +9,7 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 
 interface BlockEditorProps {
-  value?: string;              // stored JSON from DB
+  value?: string;           
   onChange: (value: string) => void;
 }
 
@@ -24,7 +24,6 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
     onChange(JSON.stringify(editor.document));
   }, [editor, onChange]);
 
-  // ✅ Resolve theme properly
   const blockNoteTheme = useMemo<"light" | "dark">(() => {
     return resolvedTheme === "dark" ? "dark" : "light";
   }, [resolvedTheme]);
