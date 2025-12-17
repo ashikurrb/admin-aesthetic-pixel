@@ -42,7 +42,7 @@ export default function CreateNewPost() {
   const [metaDescription, setMetaDescription] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [status, setStatus] = useState("Draft");
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -385,11 +385,11 @@ export default function CreateNewPost() {
                   >
                     <Calendar
                       mode="single"
-                      selected={date}
+                      selected={date ?? undefined} 
                       captionLayout="dropdown"
-                      onSelect={(date) => {
-                        setDate(date);
-                        setOpen(false);
+                      onSelect={(d) => {
+                        setDate(d ?? null);
+                        if (d) setOpen(false);
                       }}
                     />
                   </PopoverContent>

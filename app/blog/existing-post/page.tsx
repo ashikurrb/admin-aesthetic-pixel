@@ -109,6 +109,9 @@ export default function ExistingPost() {
                 Status
               </TableHead>
               <TableHead className="dark:text-gray-100 font-extrabold">
+                Published At
+              </TableHead>
+              <TableHead className="dark:text-gray-100 font-extrabold">
                 Created
               </TableHead>
               <TableHead className="dark:text-gray-100 font-extrabold">
@@ -157,6 +160,9 @@ export default function ExistingPost() {
                     >
                       {post?.status}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="dark:text-gray-100">
+                    {dayjs(post?.publishedAt).format("DD-MMM-YYYY")}
                   </TableCell>
                   <TableCell className="dark:text-gray-100">
                     {dayjs(post?.createdAt).format("DD-MMM-YYYY hh:mm A")}
