@@ -101,8 +101,8 @@ export default function CreateNewPost() {
 
       //reset form
       setTitle("");
-      setContent(null);
-      setCategory(null);
+      setContent("");
+      setCategory("");
       setSubCategory("");
       setCoverPhoto(null);
       setPreviewUrl(null);
@@ -118,7 +118,6 @@ export default function CreateNewPost() {
       setCreateLoading(false);
     }
   };
-
 
   return (
     <div className="container">
@@ -391,6 +390,7 @@ export default function CreateNewPost() {
                       selected={date}
                       captionLayout="dropdown"
                       onSelect={(date) => {
+                        if (!date) return;
                         setDate(date);
                         setOpen(false);
                       }}
