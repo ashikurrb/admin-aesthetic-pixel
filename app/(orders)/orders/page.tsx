@@ -1,7 +1,9 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
@@ -13,8 +15,20 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import dayjs from "dayjs";
-import { ArrowDownAz, CheckCircle, Clock, ClockFading, ClockFadingIcon, Eye, RefreshCcw, TicketX, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ArrowDownAz,
+  CheckCircle,
+  Clock,
+  ClockFading,
+  ClockFadingIcon,
+  Eye,
+  RefreshCcw,
+  Search,
+  TicketX,
+  X,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface PaymentDetail {
@@ -28,6 +42,7 @@ interface PaymentDetail {
 export default function Orders() {
   const [loading, setLoading] = useState<boolean>(false);
   const [orders, setOrders] = useState<any[]>([]);
+  const [searchOrder, setSearchOrder] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
@@ -49,6 +64,25 @@ export default function Orders() {
       setLoading(false);
     }
   };
+
+  //filter orders search
+  const filteredOrders = useMemo(() => {
+    const query = searchOrder.toLowerCase().trim();
+
+    if (!query) return orders;
+
+    return orders.filter((o) => {
+      return (
+        o.orderId?.toLowerCase().includes(query) ||
+        o.paymentDetails?.some(
+          (pd: PaymentDetail) =>
+            pd.trxId?.toLowerCase().includes(query) ||
+            pd.accNo?.toLowerCase().includes(query) ||
+            pd.method?.toLowerCase().includes(query)
+        )
+      );
+    });
+  }, [orders, searchOrder]);
 
   const updateOrderStatus = async (
     status: "Accepted" | "Cancelled" | "Pending" | "Refunded"
@@ -85,7 +119,25 @@ export default function Orders() {
 
   return (
     <div className="lg:px-8 w-full pb-10">
-      <h1 className="text-4xl text-white font-bold py-10">Orders</h1>
+      <h1 className="text-4xl font-bold">Orders</h1>
+      <div className="flex justify-end items-center mb-4">
+        {/* Search wrapper */}
+        <div className="relative max-w-sm w-full">
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+          />
+
+          <Input
+            type="text"
+            className="h-12 pl-10 border-gray-400 border-2"
+            placeholder="Search orders..."
+            value={searchOrder}
+            onChange={(e) => setSearchOrder(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="relative w-full max-w-[90vw] md:max-w-full max-h-[90vh] overflow-auto rounded-md">
         <Table>
           <TableHeader className="sticky top-0 z-50 bg-gray-700">
@@ -105,8 +157,8 @@ export default function Orders() {
           {loading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-10">
-                  <div className="flex items-center justify-center gap-2 text-gray-300">
+                <TableCell colSpan={10} className="text-center py-10">
+                  <div className="flex items-center justify-center gap-2 text-gray-300 text-md">
                     <Spinner /> Loading orders...
                   </div>
                 </TableCell>
@@ -114,17 +166,25 @@ export default function Orders() {
             </TableBody>
           ) : (
             <TableBody>
-              {orders.length === 0 ? (
+              {filteredOrders.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={10}
                     className="text-center py-10 text-gray-400"
                   >
-                    No orders found
+                    <h3 className="text-lg font-semibold">No orders found</h3>
+                    <br />
+                    <Button
+                      variant="secondary"
+                      className="cursor-pointer rounded-lg border-gray-300"
+                      onClick={() => setSearchOrder("")}
+                    >
+                     Clear
+                    </Button>
                   </TableCell>
                 </TableRow>
               ) : (
-                orders.map((order, index) => (
+                filteredOrders.map((order, index) => (
                   <TableRow
                     key={order._id}
                     className="border-b border-gray-800"
@@ -243,7 +303,8 @@ export default function Orders() {
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                  <ClockFading size={16} className="font-bold"/> Set Pending Again
+                    <ClockFading size={16} className="font-bold" /> Set Pending
+                    Again
                   </span>
                 )}
               </button>
@@ -327,7 +388,9 @@ export default function Orders() {
                   <Spinner /> Processing...
                 </span>
               ) : (
-                <span className="flex gap-2 items-center"><RefreshCcw /> Refund</span>
+                <span className="flex gap-2 items-center">
+                  <RefreshCcw /> Refund
+                </span>
               )}
             </button>
 
@@ -342,7 +405,9 @@ export default function Orders() {
                     <Spinner /> Processing...
                   </span>
                 ) : (
-                  <span className="flex gap-2 items-center"><XCircle /> Cancel Order</span>
+                  <span className="flex gap-2 items-center">
+                    <XCircle /> Cancel Order
+                  </span>
                 )}
               </button>
 
@@ -356,7 +421,9 @@ export default function Orders() {
                     <Spinner /> Processing...
                   </span>
                 ) : (
-                  <span className="flex gap-2 items-center"><CheckCircle /> Accept</span>
+                  <span className="flex gap-2 items-center">
+                    <CheckCircle /> Accept
+                  </span>
                 )}
               </button>
             </div>

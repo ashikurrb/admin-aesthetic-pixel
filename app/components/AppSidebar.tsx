@@ -7,14 +7,14 @@ import {
 } from "@/components/ui/sidebar";
 import {
   BookOpen,
-  Briefcase,
+  Box,
+  BriefcaseBusiness,
   CirclePlus,
   CirclePower,
   FileImage,
   HomeIcon,
   Settings,
   SquarePen,
-  UserPlus,
   UserRound,
   Users,
 } from "lucide-react";
@@ -59,13 +59,23 @@ export function AppSidebar() {
       {/* Content */}
       <SidebarContent className="px-3 ">
         <div className="space-y-3">
+          <Link href="/products">
+            <div
+              className={`flex items-center gap-3 font-bold cursor-pointer my-1 ${
+                pathname.startsWith("/products") ? activeClass : inactiveClass
+              }`}
+            >
+              <Box className="w-4 h-4" />
+              Products
+            </div>
+          </Link>
           <Link href="/orders">
             <div
               className={`flex items-center gap-3 font-bold cursor-pointer my-1 ${
                 pathname.startsWith("/orders") ? activeClass : inactiveClass
               }`}
             >
-              <Briefcase className="w-4 h-4" />
+              <BriefcaseBusiness className="w-4 h-4" />
               Orders
             </div>
           </Link>

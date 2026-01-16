@@ -11,6 +11,7 @@ import {
 } from "react";
 import { parseCookies, setCookie, destroyCookie } from "nookies";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // --- Types ---
 interface User {
@@ -120,7 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => axios.interceptors.request.eject(authInterceptor);
   }, []);
 
-  // 4️⃣ Logout
+  // Logout
   const logout = () => {
     destroyCookie(null, "token", { path: "/" });
     setAuth(defaultState);
@@ -157,9 +158,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider value={{ auth, setAuth, loading, logout }}>
       {loading && !auth.token ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-          <span className="text-gray-500">Loading...</span>
-        </div>
+       <div className="min-h-screen flex items-center justify-center bg-gray-950">
+        <Image
+          src="/logoDark.png"
+          alt="Aesthetic Pixel Studio LLC"
+          width={150}
+          height={150}
+          className="animate-pulse"
+        />
+      </div>
       ) : (
         children
       )}

@@ -7,7 +7,7 @@ import {
   ShoppingBag,
   Trash2,
   ArrowUpRight,
-  TrendingUp,
+  TicketX,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +25,7 @@ interface DashboardData {
   pendingOrders: number;
   acceptedOrders: number;
   cancelledOrders: number;
+  refundedOrders: number;
   totalOrders: number;
 }
 
@@ -80,6 +81,14 @@ export default function Dashboard() {
       borderColor: "hover:border-red-500/30",
     },
     {
+      title: "Refunded Orders",
+      value: dashboardData.refundedOrders,
+      icon: TicketX,
+      color: "text-red-500",
+      bgColor: "bg-red-500/10",
+      borderColor: "hover:border-red-500/30",
+    },
+    {
       title: "Total Orders",
       value: dashboardData.totalOrders,
       icon: ShoppingBag,
@@ -106,6 +115,11 @@ export default function Dashboard() {
       color: "#ef4444",
     },
     {
+      label: "Refunded",
+      value: dashboardData.refundedOrders,
+      color: "brown",
+    },
+    {
       label: "Total",
       value: dashboardData.totalOrders,
       color: "#3b82f6",
@@ -114,16 +128,15 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen py-5 lg:p-8 dark:bg-[#0a0a0b] text-slate-50">
-
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-6">
         {cards.map((card) => (
           <Card
             key={card.title}
-            className={`relative overflow-hidden border-slate-800/60  backdrop-blur-md transition-all duration-300 ${card.borderColor} group`}
+            className={`relative overflow-hidden dark:border-slate-800/60  backdrop-blur-md transition-all duration-300 ${card.borderColor} group`}
           >
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="dark:text-slate-400 group-hover:text-slate-200 transition-colors">
+              <CardTitle className="dark:group-hover:text-slate-200 transition-colors">
                 {card.title}
               </CardTitle>
               <div
@@ -153,7 +166,7 @@ export default function Dashboard() {
 
       {/* Activity Chart Placeholder */}
       <div className="mt-8">
-        <div className="lg:h-100 rounded-2xl border border-slate-800/50 bg-[#171717] backdrop-blur-sm lg:p-6 py-5 pr-10">
+        <div className="lg:h-100 rounded-2xl border border-slate-800/50 dark:bg-[#171717] backdrop-blur-sm lg:p-6 py-5 pr-10">
           <ChartContainer
             config={{
               value: { label: "Orders" },
