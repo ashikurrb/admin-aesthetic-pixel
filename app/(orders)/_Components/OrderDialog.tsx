@@ -42,8 +42,8 @@ export function OrderDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[900px] p-0  bg-white dark:bg-zinc-950 max-h-[80vh] overflow-y-auto">
-        <DialogHeader className="p-6 border-b bg-zinc-50/50 dark:bg-zinc-900/50">
+      <DialogContent className="sm:max-w-[900px] p-0  bg-white dark:bg-zinc-950 max-h-[80vh] overflow-hidden">
+        <DialogHeader className="p-6 border-b bg-zinc-50/50 dark:bg-zinc-900/50 sticky top-0 z-10">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
@@ -95,7 +95,7 @@ export function OrderDetailsDialog({
             </button>
           </div>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-3 bg-zinc-50/30 dark:bg-zinc-900/10">
+        <div className="grid grid-cols-1 md:grid-cols-3 bg-zinc-50/30 dark:bg-zinc-900/10 max-h-[60vh] overflow-y-auto">
           <div className="md:col-span-2 p-6 border-r space-y-6 bg-background">
             <div>
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
