@@ -87,7 +87,7 @@ export function OrderDetailsDialog({
               className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               {actionLoading && actionType === "Pending" ? (
-                <Spinner className="size-12" />
+                <Spinner />
               ) : (
                 <ClockFading size={14} />
               )}
@@ -104,7 +104,7 @@ export function OrderDetailsDialog({
                   {selectedOrder?.orderItems.length} items
                 </span>
               </h3>
-              <div className="border rounded-md h-100 overflow-y-auto">
+              <div className="border rounded-md max-h-100 overflow-y-auto">
                 <Table>
                   <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                     <TableRow className="hover:bg-transparent">
@@ -158,7 +158,7 @@ export function OrderDetailsDialog({
               </div>
             </div>
 
-            <div className="pt-4 border-t text-xs text-muted-foreground">
+            <div className="pt-4 border-t text-xs text-muted-foreground ">
               Last Updated by
               <span className="font-medium text-foreground">
                 {" "}
