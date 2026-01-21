@@ -188,7 +188,7 @@ export function OrderDetailsDialog({
 
               <div className="flex items-center gap-2 text-xs text-muted-foreground pt-4 border-t border-dashed">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Updated by{" "}
+                Last Updated by
                 <span className="font-medium text-foreground">
                   {selectedOrder?.updatedBy?.name}
                 </span>
