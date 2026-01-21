@@ -75,7 +75,7 @@ export default function Profile() {
   };
 
   // handle avatar upload
-  const handleAvatarUpdate = async (e: FormEvent<HTMLFormElement>) => {
+const handleAvatarUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!avatar) return;
     setAvatarLoading(true);
@@ -98,7 +98,7 @@ export default function Profile() {
       );
 
       const updatedUser = {
-        ...auth?.user,
+        ...auth.user,
         avatar: data?.user?.avatar || data?.avatar,
       };
 
@@ -107,7 +107,7 @@ export default function Profile() {
         user: updatedUser,
       };
 
-      setAuth(updatedAuth);
+      // setAuth(updatedAuth);
 
       setCookie(null, "auth", JSON.stringify(updatedAuth), {
         maxAge: 30 * 24 * 60 * 60,
