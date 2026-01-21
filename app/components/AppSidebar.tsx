@@ -13,6 +13,7 @@ import {
   CirclePower,
   FileImage,
   HomeIcon,
+  IdCardLanyard,
   Settings,
   SquarePen,
   UserRound,
@@ -139,35 +140,32 @@ export function AppSidebar() {
           </Link>
         </div>
 
-        {/* Users */}
+        {/* Employees */}
         <div className="">
-          <Link href="/users">
+          <Link href="/employees">
             <div
               className={`flex items-center gap-3 font-bold cursor-pointer my-1 ${
-                pathname.startsWith("/users") ? activeClass : inactiveClass
+                pathname.startsWith("/employees") ? activeClass : inactiveClass
+              }`}
+            >
+              <IdCardLanyard className="w-4 h-4" />
+              Employees
+            </div>
+          </Link>
+        </div>
+
+        {/* Clients */}
+        <div className="">
+          <Link href="/clients">
+            <div
+              className={`flex items-center gap-3 font-bold cursor-pointer my-1 ${
+                pathname.startsWith("/clients") ? activeClass : inactiveClass
               }`}
             >
               <Users className="w-4 h-4" />
-              Users
+              Clients
             </div>
           </Link>
-          {/* <div className="ml-6 border-l border-muted-foreground/30 pl-4 my-1 space-y-3 mt-3">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-px bg-muted-foreground/30"></div>
-              <Link href="/users/add-user">
-                <span
-                  className={`flex items-center gap-2 text-sm cursor-pointer ${
-                    pathname.startsWith("/users/add-user")
-                      ? "text-red-600 font-bold"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  <UserPlus className="w-4 h-4" />
-                  Add User
-                </span>
-              </Link>
-            </div>
-          </div> */}
         </div>
 
         {/* Settings */}
