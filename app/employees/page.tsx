@@ -37,12 +37,11 @@ import AddNewUser from "../components/CreateNewUser";
 import axios from "axios";
 import { toast } from "sonner";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UpdateUser from "../components/UpdateUser";
-
+import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 interface User {

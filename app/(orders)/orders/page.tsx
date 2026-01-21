@@ -51,7 +51,7 @@ export default function Orders() {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/order/all-orders`
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/order/all-orders`,
       );
       setOrders(data.orders);
       setLoading(false);
@@ -74,14 +74,14 @@ export default function Orders() {
           (pd: PaymentDetail) =>
             pd.trxId?.toLowerCase().includes(query) ||
             pd.accNo?.toLowerCase().includes(query) ||
-            pd.method?.toLowerCase().includes(query)
+            pd.method?.toLowerCase().includes(query),
         )
       );
     });
   }, [orders, searchOrder]);
 
   const updateOrderStatus = async (
-    status: "Accepted" | "Cancelled" | "Pending" | "Refunded"
+    status: "Accepted" | "Cancelled" | "Pending" | "Refunded",
   ) => {
     if (!selectedOrder) return;
 
@@ -91,16 +91,15 @@ export default function Orders() {
 
       await axios.put(
         `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/order/update-order-status/${selectedOrder._id}`,
-        { status }
+        { status },
       );
 
       toast.success(`Order ${status}`);
-
       setOrders((prev) =>
-        prev.map((o) => (o._id === selectedOrder._id ? { ...o, status } : o))
+        prev.map((o) => (o._id === selectedOrder._id ? { ...o, status } : o)),
       );
-
       setSelectedOrder((prev: any) => ({ ...prev, status }));
+      getAllOrders();
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Action failed");
     } finally {
@@ -118,7 +117,9 @@ export default function Orders() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Orders</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Orders
+          </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Manage and track all customer orders and transactions.
           </p>
@@ -149,6 +150,7 @@ export default function Orders() {
               <TableHead>Order ID</TableHead>
               <TableHead>Date Placed</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Client</TableHead>
               <TableHead>Method</TableHead>
               <TableHead>Account No</TableHead>
               <TableHead>Trx ID</TableHead>
@@ -156,11 +158,11 @@ export default function Orders() {
               <TableHead className="text-center w-20">Action</TableHead>
             </TableRow>
           </TableHeader>
-          
+
           {loading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={10} className="h-24 text-center">
                   <div className="flex items-center justify-center gap-2 text-muted-foreground">
                     <Spinner /> Loading orders...
                   </div>
@@ -172,21 +174,25 @@ export default function Orders() {
               {filteredOrders.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={10}
                     className="h-[300px] text-center text-muted-foreground"
                   >
                     <div className="flex flex-col items-center justify-center gap-2">
-                       <Search className="h-8 w-8 text-muted-foreground/50" />
-                       <h3 className="text-lg font-semibold text-foreground">No orders found</h3>
-                       <p className="text-sm">Try adjusting your search criteria.</p>
-                       <Button
+                      <Search className="h-8 w-8 text-muted-foreground/50" />
+                      <h3 className="text-lg font-semibold text-foreground">
+                        No orders found
+                      </h3>
+                      <p className="text-sm">
+                        Try adjusting your search criteria.
+                      </p>
+                      <Button
                         variant="outline"
                         size="sm"
                         className="mt-2"
                         onClick={() => setSearchOrder("")}
-                       >
-                         Clear Filters
-                       </Button>
+                      >
+                        Clear Filters
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -218,55 +224,65 @@ export default function Orders() {
                     </TableCell>
 
                     <TableCell>
-             <Badge
-                  variant="outline"
-                  className={`px-2.5 py-0.5 text-xs font-semibold border ${
-                    order?.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800"
-                      : order?.status === "Accepted"
-                      ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
-                      : "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
-                  }`}
-                >
-                  {order?.status === "Pending" && (
-                    <Clock size={12} className="mr-1.5" />
-                  )}
-                  {order?.status === "Accepted" && (
-                    <CheckCircle size={12} className="mr-1.5" />
-                  )}
-                  {order?.status === "Cancelled" && (
-                    <XCircle size={12} className="mr-1.5" />
-                  )}
-                  {order?.status === "Refunded" && (
-                    <TicketX size={12} className="mr-1.5" />
-                  )}
-                  {order?.status}
-                </Badge>
+                      <Badge
+                        variant="outline"
+                        className={`px-2.5 py-0.5 text-xs font-semibold border ${
+                          order?.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800"
+                            : order?.status === "Accepted"
+                              ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
+                              : "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
+                        }`}
+                      >
+                        {order?.status === "Pending" && (
+                          <Clock size={12} className="mr-1.5" />
+                        )}
+                        {order?.status === "Accepted" && (
+                          <CheckCircle size={12} className="mr-1.5" />
+                        )}
+                        {order?.status === "Cancelled" && (
+                          <XCircle size={12} className="mr-1.5" />
+                        )}
+                        {order?.status === "Refunded" && (
+                          <TicketX size={12} className="mr-1.5" />
+                        )}
+                        {order?.status}
+                      </Badge>
                     </TableCell>
 
+                    <TableCell>{order?.createdBy?.name || "N/A"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm">
-                         <CreditCard size={14} className="text-muted-foreground" />
-                         {order.paymentDetails.length > 0 ? order.paymentDetails[0].method : "-"}
+                        <CreditCard
+                          size={14}
+                          className="text-muted-foreground"
+                        />
+                        {order.paymentDetails.length > 0
+                          ? order.paymentDetails[0].method
+                          : "-"}
                       </div>
                     </TableCell>
 
                     <TableCell>
-                         <span className="font-mono text-sm text-muted-foreground">
-                            {order.paymentDetails.map((pd: PaymentDetail) => pd.accNo).join(", ")}
-                         </span>
+                      <span className="font-mono text-sm text-muted-foreground">
+                        {order.paymentDetails
+                          .map((pd: PaymentDetail) => pd.accNo)
+                          .join(", ")}
+                      </span>
                     </TableCell>
 
                     <TableCell>
-                         <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded text-foreground">
-                            {order.paymentDetails.map((pd: PaymentDetail) => pd.trxId).join(", ")}
-                         </span>
+                      <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded text-foreground">
+                        {order.paymentDetails
+                          .map((pd: PaymentDetail) => pd.trxId)
+                          .join(", ")}
+                      </span>
                     </TableCell>
 
                     <TableCell className="text-right">
-                       <span className="font-mono font-bold text-sm">
-                          ৳{order.finalPrice.toLocaleString()}
-                       </span>
+                      <span className="font-mono font-bold text-sm">
+                        ৳{order.finalPrice.toLocaleString()}
+                      </span>
                     </TableCell>
 
                     <TableCell className="text-center">
@@ -290,9 +306,9 @@ export default function Orders() {
           )}
         </Table>
       </div>
-      
+
       {/* Dialog */}
-      <OrderDetailsDialog 
+      <OrderDetailsDialog
         open={open}
         setOpen={setOpen}
         selectedOrder={selectedOrder}
