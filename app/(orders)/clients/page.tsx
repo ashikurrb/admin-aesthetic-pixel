@@ -53,8 +53,6 @@ interface UsersResponse {
 
 export default function UsersList() {
   const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [updatedStatus, setUpdatedStatus] = useState<string>("");
-  const [userId, setUserId] = useState<string>("");
   const [spinnerLoading, setSpinnerLoading] = useState(false);
 
   // Fetch all users
@@ -80,24 +78,23 @@ export default function UsersList() {
 
   // Update client status
   const handleStatusUpdate = async (userId: string, status: string) => {
-    const isBlocking = status === "Blocked";
+    try {
+      const isBlocking = status === "Blocked";
+      const updatePromise = axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-client/${userId}`,
+        { status },
+      );
 
-    const updatePromise = axios.put(
-      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/auth/update-client/${userId}`,
-      { status },
-    );
+      await toast.promise(updatePromise, {
+        loading: isBlocking ? "Blocking client..." : "Activating client...",
+        success: (res) => res.data.message,
+        error: (err) => err?.response?.data?.message,
+      });
 
-    toast.promise(updatePromise, {
-      loading: isBlocking ? "Blocking client..." : "Activating client...",
-      success: (data) => {
-        getAllClients();
-        return (
-          data.data.message ||
-          `Client ${isBlocking ? "Blocked" : "Activated"} successfully`
-        );
-      },
-      error: (error) => error?.response?.data?.message || "Update failed",
-    });
+      getAllClients();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message);
+    }
   };
 
   return (
