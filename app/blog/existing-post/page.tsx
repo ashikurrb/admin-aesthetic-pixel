@@ -32,6 +32,7 @@ import dayjs from "dayjs";
 import { toast } from "sonner";
 import axios from "axios";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 dayjs.extend(relativeTime);
 
 interface BlogResponse {
@@ -50,7 +51,7 @@ export default function ExistingPost() {
     setSpinnerLoading(true);
     try {
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/blog/get-all-blogs`
+        `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/blog/get-all-blogs`,
       );
       setBlogs(data.blogs);
       setSpinnerLoading(false);
@@ -64,7 +65,7 @@ export default function ExistingPost() {
   const handleDeleteBlog = async (blogToDelete: string) => {
     setDeleteLoading(true);
     const { data } = await axios.delete<BlogResponse>(
-      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/blog/delete-blog/${blogToDelete}`
+      `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}/api/v1/blog/delete-blog/${blogToDelete}`,
     );
     if (data.success) {
       toast.success(data.message);
@@ -138,7 +139,7 @@ export default function ExistingPost() {
                     <b> {index + 1}</b>
                   </TableCell>
                   <TableCell className="dark:text-gray-100">
-                    {post?.title}
+                    <Link href={`/blog/existing-post/${post.slug}`}>{post?.title}</Link>
                   </TableCell>
                   <TableCell className="dark:text-gray-100">
                     {post?.category?.name}

@@ -120,3 +120,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.bn-editor {
+  background-color: transparent !important;
+}
+
+.bn-viewer .bn-editor {
+  --bn-colors-editor-background: transparent;
+}

@@ -2,10 +2,10 @@
 
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
-
+import { Block } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 
 interface BlogContentViewerProps {
@@ -15,17 +15,34 @@ interface BlogContentViewerProps {
 export default function BlogContentViewer({ content }: BlogContentViewerProps) {
   const { resolvedTheme } = useTheme();
   const editor = useCreateBlockNote({
-    initialContent: JSON.parse(content),
-    editable: false,
   });
 
-  const blockNoteTheme = useMemo<"light" | "dark">(() => {
-    return resolvedTheme === "dark" ? "dark" : "light";
-  }, [resolvedTheme]);
+  const parsedContent = useMemo(() => {
+    try {
+      return JSON.parse(content) as Block[];
+    } catch (error) {
+      console.error("Failed to parse BlockNote content:", error);
+      return undefined;
+    }
+  }, [content]);
+
+  useEffect(() => {
+    if (editor && parsedContent) {
+      editor.replaceBlocks(editor.document, parsedContent);
+    }
+  }, [editor, parsedContent]);
+
+  const blockNoteTheme = resolvedTheme === "dark" ? "dark" : "light";
+
+  if (!editor) return null;
 
   return (
-    <div className="prose dark:prose-invert max-w-none">
-      <BlockNoteView editor={editor} theme={blockNoteTheme} editable={false} />
+    <div className="bn-viewer max-w-none w-full">
+      <BlockNoteView 
+        editor={editor} 
+        theme={blockNoteTheme} 
+        editable={false}
+      />
     </div>
   );
 }

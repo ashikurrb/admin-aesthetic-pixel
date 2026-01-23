@@ -4,18 +4,16 @@ import { useCallback, useMemo } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useTheme } from "next-themes";
-
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 
 interface BlockEditorProps {
-  value?: string;           
+  value?: string;
   onChange: (value: string) => void;
 }
 
 export default function BlockEditor({ value, onChange }: BlockEditorProps) {
   const { resolvedTheme } = useTheme();
-
   const editor = useCreateBlockNote({
     initialContent: value ? JSON.parse(value) : undefined,
   });

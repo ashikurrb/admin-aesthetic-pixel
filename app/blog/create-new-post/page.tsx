@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 export default function CreateNewPost() {
   const [createLoading, setCreateLoading] = useState(false);
@@ -37,7 +38,6 @@ export default function CreateNewPost() {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
-  const [tag, setTag] = useState("");
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [metaDescription, setMetaDescription] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -45,12 +45,12 @@ export default function CreateNewPost() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
-  const { categories, fetchCategories, loading } = useCategoryStore();
+  const { categories, fetchCategories } = useCategoryStore();
   const {
     subCategories,
     fetchSubCategories,
-    loading: subLoading,
   } = useSubCategoryStore();
   const [parentCategory, setParentCategory] = useState("");
 
@@ -109,6 +109,7 @@ export default function CreateNewPost() {
       setStatus("Draft");
       setDate(undefined);
       toast.success(res.data?.message);
+      router.push("/blog/existing-post/");
     } catch (error: any) {
       console.error(error);
       toast.error(error.response?.data?.message);
@@ -229,8 +230,8 @@ export default function CreateNewPost() {
                         </div>
                       ) : (
                         filteredSubs.map((sub) => (
-                          <SelectItem key={sub._id} value={sub._id}>
-                            {sub.name}
+                          <SelectItem key={sub?._id} value={sub?._id}>
+                            {sub?.name}
                           </SelectItem>
                         ))
                       )}
