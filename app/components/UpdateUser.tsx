@@ -11,19 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { Checkbox } from "@/components/ui/checkbox";
-import { X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
-const permissionsList = [
-  { value: "view-dashboard", label: "View Dashboard" },
-  { value: "manage-users", label: "Manage Users" },
-  { value: "edit-content", label: "Edit Content" },
-  { value: "access-report", label: "Access Report" },
-  { value: "configure-settings", label: "Configure Settings" },
-];
 
 interface UserFormProps {
   onClose?: () => void;
@@ -41,20 +33,12 @@ export default function UserForm({
   const [phone, setPhone] = useState(initialData?.phone || "");
   const [role, setRole] = useState(initialData?.role || "");
   const [status, setStatus] = useState(initialData?.status || "Active");
-  const [permissions, setPermissions] = useState<string[]>(
-    initialData?.permissions || []
-  );
+  const [employeeId, setEmployeeId] = useState(initialData?.employeeId || "");
   const [loading, setLoading] = useState(false);
   const demoAvatar = "/demoAvatar.png";
 
   // For update mode, use the avatar URL from data, otherwise use demo
   const currentAvatar = initialData?.avatar || demoAvatar;
-
-  const handlePermissionChange = (value: string, checked: boolean) => {
-    setPermissions((prev) =>
-      checked ? [...prev, value] : prev.filter((v) => v !== value)
-    );
-  };
 
   //handle update
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
@@ -66,8 +50,8 @@ export default function UserForm({
     formData.append("email", email);
     formData.append("phone", phone);
     formData.append("role", role);
+    formData.append("employeeId", employeeId);
     formData.append("status", status);
-    formData.append("permissions", JSON.stringify(permissions));
 
     try {
       const res = await axios.put(
@@ -88,7 +72,7 @@ export default function UserForm({
       setPhone("");
       setRole("");
       setStatus("");
-      setPermissions([]);
+      setEmployeeId("");
 
       onSuccess?.();
       onClose?.();
@@ -106,7 +90,7 @@ export default function UserForm({
     setPhone(initialData.phone || "");
     setRole(initialData.role || "");
     setStatus(initialData.status || "Active");
-    setPermissions(initialData.permissions || []);
+    setEmployeeId(initialData.employeeId || "");
   }, [initialData]);
 
   return (
@@ -196,7 +180,17 @@ export default function UserForm({
                   </Select>
                 </div>
 
-                {/* Status Select (New) */}
+                {/* Employee ID */}
+                <div className="space-y-2">
+                  <Label htmlFor="employeeId">Employee ID</Label>
+                 <Input
+                    id="employeeId"
+                    type="text"
+                    value={employeeId}
+                    onChange={(e) => setEmployeeId(e.target.value)}
+                    placeholder="Employee ID"
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
                   <Select
@@ -250,39 +244,6 @@ export default function UserForm({
                   <p className="text-sm text-muted-foreground">
                     Profile Picture
                   </p>
-                </div>
-
-                <div className="border-t my-4" />
-
-                {/* Permissions  */}
-                <div>
-                  <h3 className="font-medium mb-3 text-sm text-muted-foreground uppercase tracking-wider">
-                    Permissions
-                  </h3>
-                  <div className="space-y-3 bg-muted/30 p-4 rounded-lg border">
-                    {permissionsList.map((perm) => (
-                      <div
-                        key={perm.value}
-                        className="flex items-center space-x-3"
-                      >
-                        <Checkbox
-                          className="border-red-700 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600 data-[state=checked]:hover:bg-red-700 data-[state=checked]:focus:ring-red-500"
-                          id={perm.value}
-                          checked={permissions.includes(perm.value)}
-                          disabled={loading}
-                          onCheckedChange={(checked) =>
-                            handlePermissionChange(perm.value, checked === true)
-                          }
-                        />
-                        <Label
-                          htmlFor={perm.value}
-                          className="text-sm font-normal cursor-pointer select-none"
-                        >
-                          {perm.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
                 <div className="mt-auto pt-8 flex gap-3">
